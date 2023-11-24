@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Things to look at
+- https://air.health/bayarea
+- https://jsfiddle.net/arg02/hyf6m8rw/25/ (with difference)
+- 
 ## Available Scripts
 
 In the project directory, you can run:

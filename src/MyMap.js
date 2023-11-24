@@ -6,6 +6,7 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl";
 import React, { useRef, useEffect, useState } from "react";
+import ControlPanel from "./control-panel";
 import {
   ltnFillDataLayer,
   ltnOutlineDataLayer,
@@ -15,6 +16,13 @@ import {
 import GeocoderControl from "./geocoder-control";
 
 function MyMap({ siteData, ltnData, boroughData }) {
+  const [ltnVisibility, setLtnVisibility] = useState(true);
+
+  const updateLtnVisibility = () => {
+    setLtnVisibility(!ltnVisibility);
+    console.log("Updating LTN visibility to ", !ltnVisibility);
+  };
+
   const forwardGeocoder = (query) => {
     console.log("Entered forwardGeocoder");
 
@@ -82,13 +90,23 @@ function MyMap({ siteData, ltnData, boroughData }) {
           localGeocoder={forwardGeocoder}
         />
         <Source type="geojson" data={ltnData}>
-          <Layer {...ltnFillDataLayer} />
-          <Layer {...ltnOutlineDataLayer} />
+          <Layer
+            {...ltnFillDataLayer}
+            layout={{ visibility: ltnVisibility ? "visible" : "none" }}
+          />
+          <Layer
+            {...ltnOutlineDataLayer}
+            layout={{ visibility: ltnVisibility ? "visible" : "none" }}
+          />
         </Source>
         <Source type="geojson" data={siteData}>
           {/* <Layer {...pm25Layer} /> */}
           <Layer {...no2Layer} />
         </Source>
+        <ControlPanel
+          ltnVisibility={ltnVisibility}
+          onLtnChange={updateLtnVisibility}
+        />
       </Map>
     </>
   );
