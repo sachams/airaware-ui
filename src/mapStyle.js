@@ -22,6 +22,28 @@ export const ltnOutlineDataLayer = {
   },
 };
 
+export const boroughFillDataLayer = {
+  id: "boroughs_fill",
+  type: "fill",
+  source: "boroughs", // reference the data source
+  layout: {},
+  paint: {
+    "fill-color": "#E32636", // red color fill
+    "fill-opacity": 0.3,
+  },
+};
+
+export const boroughOutlineDataLayer = {
+  id: "boroughs_outline",
+  type: "line",
+  source: "boroughs",
+  layout: {},
+  paint: {
+    "line-color": "#777",
+    "line-width": 1,
+  },
+};
+
 export const pm25Layer = {
   id: "pm25Layer",
   type: "circle",

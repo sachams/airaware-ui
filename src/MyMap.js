@@ -4,23 +4,99 @@ import Map, {
   NavigationControl,
   FullscreenControl,
   GeolocateControl,
+  Popup,
 } from "react-map-gl";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import ControlPanel from "./control-panel";
 import {
   ltnFillDataLayer,
   ltnOutlineDataLayer,
+  boroughFillDataLayer,
+  boroughOutlineDataLayer,
   pm25Layer,
   no2Layer,
 } from "./mapStyle";
 import GeocoderControl from "./geocoder-control";
+import LtnPopup from "./ltn-popup";
+import NodePopup from "./node-popup";
 
 function MyMap({ siteData, ltnData, boroughData }) {
+  const adjustCoordinates = (event, coordinates) => {
+    // Ensure that if the map is zoomed out such that multiple
+    // copies of the feature are visible, the popup appears
+    // over the copy being pointed to.
+    while (Math.abs(event.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += event.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    return coordinates;
+  };
+
+  const getLtnCoordinates = (event) => {
+    const centre = JSON.parse(event.features[0].properties.centre);
+    const coordinates = adjustCoordinates(event, centre.coordinates.slice());
+    return coordinates;
+  };
+
+  const getNodeLayerCoordinates = (event) => {
+    return adjustCoordinates(
+      event,
+      event.features[0].geometry.coordinates.slice()
+    );
+  };
+
   const [ltnVisibility, setLtnVisibility] = useState(true);
+  const [boroughVisibility, setBoroughVisibility] = useState(true);
+  const [series, setSeries] = useState("pm25");
+  const [hoverInfo, setHoverInfo] = useState(null);
+
+  const interactiveLayerIds = ["ltn_areas_fill", "no2Layer", "pm25Layer"];
+
+  const onMouseMove = useCallback((event) => {
+    if (event.features.length === 0) {
+      console.log("No feature");
+      setHoverInfo(null);
+      return;
+    }
+
+    let coordinates = null;
+
+    switch (event.features[0].layer.id) {
+      case "ltn_areas_fill":
+        coordinates = getLtnCoordinates(event);
+        break;
+
+      case "no2Layer":
+        coordinates = getNodeLayerCoordinates(event);
+        break;
+      case "pm25Layer":
+        coordinates = getNodeLayerCoordinates(event);
+        break;
+    }
+
+    if (coordinates) {
+      setHoverInfo({
+        properties: event.features[0].properties,
+        longitude: coordinates[0],
+        latitude: coordinates[1],
+        layerId: event?.features[0].layer.id,
+      });
+    }
+  });
+
+  const updateSeries = (event) => {
+    console.log("Setting series to ", event.target.value);
+    setSeries(event.target.value);
+  };
 
   const updateLtnVisibility = () => {
     setLtnVisibility(!ltnVisibility);
     console.log("Updating LTN visibility to ", !ltnVisibility);
+  };
+
+  const updateBoroughVisibility = () => {
+    setBoroughVisibility(!boroughVisibility);
+    console.log("Updating Borough visibility to ", !boroughVisibility);
   };
 
   const forwardGeocoder = (query) => {
@@ -68,6 +144,8 @@ function MyMap({ siteData, ltnData, boroughData }) {
     <>
       <Map
         mapLib={import("mapbox-gl")}
+        onMouseMove={onMouseMove}
+        interactiveLayerIds={interactiveLayerIds}
         initialViewState={{
           latitude: 51.5099903,
           longitude: -0.1304413,
@@ -99,13 +177,52 @@ function MyMap({ siteData, ltnData, boroughData }) {
             layout={{ visibility: ltnVisibility ? "visible" : "none" }}
           />
         </Source>
+
+        <Source type="geojson" data={boroughData}>
+          <Layer
+            {...boroughFillDataLayer}
+            layout={{ visibility: boroughVisibility ? "visible" : "none" }}
+          />
+          <Layer
+            {...boroughOutlineDataLayer}
+            layout={{ visibility: boroughVisibility ? "visible" : "none" }}
+          />
+        </Source>
+
+        {hoverInfo?.layerId === "ltn_areas_fill" && (
+          <LtnPopup
+            longitude={hoverInfo.longitude}
+            latitude={hoverInfo.latitude}
+            properties={hoverInfo.properties}
+          />
+        )}
+
+        {(hoverInfo?.layerId === "no2Layer" ||
+          hoverInfo?.layerId === "pm25Layer") && (
+          <NodePopup
+            longitude={hoverInfo.longitude}
+            latitude={hoverInfo.latitude}
+            properties={hoverInfo.properties}
+          />
+        )}
+
         <Source type="geojson" data={siteData}>
-          {/* <Layer {...pm25Layer} /> */}
-          <Layer {...no2Layer} />
+          <Layer
+            {...pm25Layer}
+            layout={{ visibility: series === "pm25" ? "visible" : "none" }}
+          />
+          <Layer
+            {...no2Layer}
+            layout={{ visibility: series === "no2" ? "visible" : "none" }}
+          />
         </Source>
         <ControlPanel
           ltnVisibility={ltnVisibility}
           onLtnChange={updateLtnVisibility}
+          boroughVisibility={boroughVisibility}
+          onBoroughChange={updateBoroughVisibility}
+          onSeriesChange={updateSeries}
+          seriesValue={series}
         />
       </Map>
     </>
