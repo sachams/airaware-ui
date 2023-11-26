@@ -40,6 +40,10 @@ function NodePopup({ longitude, latitude, properties }) {
             <td>Borough</td>
             <td>{properties.borough}</td>
           </tr>
+          <tr>
+            <td>Type</td>
+            <td>{properties.site_type}</td>
+          </tr>
         </tbody>
       </table>
     </Popup>
