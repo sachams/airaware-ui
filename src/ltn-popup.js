@@ -6,7 +6,7 @@ function LtnPopup({ longitude, latitude, properties }) {
     <Popup
       longitude={longitude}
       latitude={latitude}
-      offset={[0, -10]}
+      offset={[0, 0]}
       closeButton={false}
       className="hover-info"
     >

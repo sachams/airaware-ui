@@ -6,7 +6,7 @@ import Map, {
   GeolocateControl,
   Popup,
 } from "react-map-gl";
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useMemo } from "react";
 import ControlPanel from "./control-panel";
 import {
   ltnFillDataLayer,
@@ -15,12 +15,16 @@ import {
   boroughOutlineDataLayer,
   pm25Layer,
   no2Layer,
+  selectedNodeLayer,
 } from "./mapStyle";
 import GeocoderControl from "./geocoder-control";
 import LtnPopup from "./ltn-popup";
 import NodePopup from "./node-popup";
+import SidePanel from "./side-panel";
 
 function MyMap({ siteData, ltnData, boroughData }) {
+  const mapRef = useRef();
+
   const adjustCoordinates = (event, coordinates) => {
     // Ensure that if the map is zoomed out such that multiple
     // copies of the feature are visible, the popup appears
@@ -49,6 +53,14 @@ function MyMap({ siteData, ltnData, boroughData }) {
   const [boroughVisibility, setBoroughVisibility] = useState(true);
   const [series, setSeries] = useState("pm25");
   const [hoverInfo, setHoverInfo] = useState(null);
+  const [selectedFeature, setSelectedFeature] = useState(null);
+  const selectedSiteCode = selectedFeature
+    ? selectedFeature.properties.site_code
+    : "";
+  const selectedNodeFilter = useMemo(
+    () => ["in", "site_code", selectedSiteCode],
+    [selectedSiteCode]
+  );
 
   const interactiveLayerIds = ["ltn_areas_fill", "no2Layer", "pm25Layer"];
 
@@ -81,6 +93,44 @@ function MyMap({ siteData, ltnData, boroughData }) {
         latitude: coordinates[1],
         layerId: event?.features[0].layer.id,
       });
+    }
+  });
+
+  const setFeatureState = (selectedFeature, isSelected) => {
+    if (selectedFeature) {
+      mapRef.current.setFeatureState(
+        { source: "nodes", id: selectedFeature.id },
+        { selected: isSelected }
+      );
+    }
+  };
+  const onClick = useCallback((event) => {
+    if (event.features.length === 0) {
+      console.log("Click no feature");
+      setFeatureState(selectedFeature, false);
+      setSelectedFeature(null);
+      return;
+    }
+
+    switch (event.features[0].layer.id) {
+      case "no2Layer":
+      case "pm25Layer":
+        console.log("switch", event.features[0]);
+        // If the node is the one that is selected, unselect it
+        if (selectedFeature?.id === event.features[0].id) {
+          setFeatureState(selectedFeature, false);
+          setSelectedFeature(null);
+        } else {
+          setFeatureState(selectedFeature, false);
+          setFeatureState(event.features[0], true);
+          setSelectedFeature(event.features[0]);
+        }
+        break;
+
+      default:
+        setFeatureState(selectedFeature, false);
+        setSelectedFeature(null);
+        break;
     }
   });
 
@@ -144,7 +194,9 @@ function MyMap({ siteData, ltnData, boroughData }) {
     <>
       <Map
         mapLib={import("mapbox-gl")}
+        ref={mapRef}
         onMouseMove={onMouseMove}
+        onClick={onClick}
         interactiveLayerIds={interactiveLayerIds}
         initialViewState={{
           latitude: 51.5099903,
@@ -155,9 +207,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
-        <FullscreenControl position="top-right" />
-        <NavigationControl position="top-right" />
-        <GeolocateControl position="top-right" />
         <GeocoderControl
           mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
           position="bottom-right"
@@ -167,7 +216,8 @@ function MyMap({ siteData, ltnData, boroughData }) {
           }}
           localGeocoder={forwardGeocoder}
         />
-        <Source type="geojson" data={ltnData}>
+        <NavigationControl position="bottom-right" />
+        <Source type="geojson" data={ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
             layout={{ visibility: ltnVisibility ? "visible" : "none" }}
@@ -178,7 +228,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
           />
         </Source>
 
-        <Source type="geojson" data={boroughData}>
+        <Source type="geojson" data={boroughData} generateId={true}>
           <Layer
             {...boroughFillDataLayer}
             layout={{ visibility: boroughVisibility ? "visible" : "none" }}
@@ -206,7 +256,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
           />
         )}
 
-        <Source type="geojson" data={siteData}>
+        <Source id="nodes" type="geojson" data={siteData} generateId={true}>
           <Layer
             {...pm25Layer}
             layout={{ visibility: series === "pm25" ? "visible" : "none" }}
@@ -224,6 +274,9 @@ function MyMap({ siteData, ltnData, boroughData }) {
           onSeriesChange={updateSeries}
           seriesValue={series}
         />
+        {selectedFeature && (
+          <SidePanel nodeProperties={selectedFeature.properties} />
+        )}
       </Map>
     </>
   );

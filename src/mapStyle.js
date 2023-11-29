@@ -49,11 +49,10 @@ export const pm25Layer = {
   type: "circle",
   paint: {
     "circle-color": [
-      "match",
-      ["get", "status"],
-      "healthy",
-      "#69bdc7",
-      /* other */ "#aaa",
+      "case",
+      ["boolean", ["feature-state", "selected"], false],
+      "#ff0000",
+      ["match", ["get", "status"], "healthy", "#69bdc7", /* other */ "#aaa"],
     ],
 
     "circle-radius": [
@@ -85,11 +84,10 @@ export const no2Layer = {
   type: "circle",
   paint: {
     "circle-color": [
-      "match",
-      ["get", "status"],
-      "healthy",
-      "#b88c49",
-      /* other */ "#aaa",
+      "case",
+      ["boolean", ["feature-state", "selected"], false],
+      "#ff0000",
+      ["match", ["get", "status"], "healthy", "#b88c49", /* other */ "#aaa"],
     ],
 
     "circle-radius": [
