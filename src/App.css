@@ -52,12 +52,21 @@
   justify-content: space-between;
 }
 
-.side-panel {
+.side-panel-title {
+  font: 20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+.side-panel-subtitle {
+  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+.side-panel-collapsed {
   font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 200px;
+  width: 20%;
   display: flex;
   border-radius: 5px;
   background-color: rgb(255, 255, 255);
@@ -66,4 +75,41 @@
   display: flex;
   flex-flow: column;
   justify-content: space-between;
+}
+
+.side-panel-expanded {
+  font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  display: flex;
+  border-radius: 5px;
+  background-color: rgb(255, 255, 255);
+  padding: 10px;
+  z-index: 10;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+}
+
+.site-info {
+  flex: 1;
+}
+
+.comparison-graph-collapsed {
+  width: 100%;
+}
+
+.comparison-graph-expanded {
+  width: 50%;
+  display: inline-block
+}
+
+.graph-wrapper {
+  flex: 1;
+}
+
+figure {
+  margin: 0px;
 }

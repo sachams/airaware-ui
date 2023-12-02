@@ -3,7 +3,9 @@ import MyMap from "./MyMap";
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { DateTime } from "luxon";
-const serverUrl = "https://breathe-air.fly.dev";
+
+const serverUrl = process.env.REACT_APP_SERVER_URL;
+
 const nullGeoJson = {
   type: "FeatureCollection",
   features: [],

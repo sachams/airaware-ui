@@ -6,7 +6,13 @@ import Map, {
   GeolocateControl,
   Popup,
 } from "react-map-gl";
-import React, { useRef, useCallback, useState, useMemo } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useCallback,
+  useState,
+  useMemo,
+} from "react";
 import ControlPanel from "./control-panel";
 import {
   ltnFillDataLayer,
@@ -50,7 +56,9 @@ function MyMap({ siteData, ltnData, boroughData }) {
   };
 
   const [ltnVisibility, setLtnVisibility] = useState(true);
-  const [boroughVisibility, setBoroughVisibility] = useState(true);
+  const [forwardGeocoderFunc, setForwardGeocoderFunc] = useState(undefined);
+
+  const [boroughVisibility, setBoroughVisibility] = useState(false);
   const [series, setSeries] = useState("pm25");
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedFeature, setSelectedFeature] = useState(null);
@@ -66,7 +74,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
 
   const onMouseMove = useCallback((event) => {
     if (event.features.length === 0) {
-      console.log("No feature");
       setHoverInfo(null);
       return;
     }
@@ -106,7 +113,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
   };
   const onClick = useCallback((event) => {
     if (event.features.length === 0) {
-      console.log("Click no feature");
       setFeatureState(selectedFeature, false);
       setSelectedFeature(null);
       return;
@@ -115,7 +121,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
     switch (event.features[0].layer.id) {
       case "no2Layer":
       case "pm25Layer":
-        console.log("switch", event.features[0]);
         // If the node is the one that is selected, unselect it
         if (selectedFeature?.id === event.features[0].id) {
           setFeatureState(selectedFeature, false);
@@ -149,46 +154,59 @@ function MyMap({ siteData, ltnData, boroughData }) {
     console.log("Updating Borough visibility to ", !boroughVisibility);
   };
 
-  const forwardGeocoder = (query) => {
-    console.log("Entered forwardGeocoder");
+  useEffect(() => {
+    const forwardGeocoder = (query) => {
+      console.log("Entered forwardGeocoder");
 
-    var matchingFeatures = [];
-
-    console.log("Query is ", query);
-    console.log("siteData is ", siteData);
-    console.log("ltnData is ", ltnData);
-
-    // Find matching nodes
-    siteData.features.forEach((feature) => {
-      // Handle queries with different capitalization
-      // than the source data by calling toLowerCase().
-      if (
-        feature.properties.site_name.toLowerCase().includes(query.toLowerCase())
-      ) {
-        // Add a tree emoji as a prefix for custom
-        // data results using carmen geojson format:
-        // https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
-        feature["place_name"] = `📍 ${feature.properties.site_name}`;
-        feature["center"] = feature.geometry.coordinates;
-        feature["place_type"] = ["poi"];
-        matchingFeatures.push(feature);
+      if (query === undefined || query.length == 0) {
+        console.log("query is undefined - returning");
+        return [];
       }
-    });
+      var matchingFeatures = [];
 
-    // Find matching LTNs
-    ltnData.features.forEach((feature) => {
-      // Handle queries with different capitalization
-      // than the source data by calling toLowerCase().
-      if (feature.properties.Name.toLowerCase().includes(query.toLowerCase())) {
-        feature["place_name"] = `🚧 ${feature.properties.Name}`;
-        feature["center"] = feature.properties.centre.coordinates;
-        feature["place_type"] = ["poi"];
-        matchingFeatures.push(feature);
-      }
-    });
+      console.log("Query is ", query);
+      console.log("siteData is ", siteData);
+      console.log("ltnData is ", ltnData);
 
-    return matchingFeatures;
-  };
+      // Find matching nodes
+      siteData.features.forEach((feature) => {
+        // Handle queries with different capitalization
+        // than the source data by calling toLowerCase().
+        if (
+          feature.properties.site_name
+            .toLowerCase()
+            .includes(query.toLowerCase())
+        ) {
+          // Add a tree emoji as a prefix for custom
+          // data results using carmen geojson format:
+          // https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
+          feature["place_name"] = `📍 ${feature.properties.site_name}`;
+          feature["center"] = feature.geometry.coordinates;
+          feature["place_type"] = ["poi"];
+          matchingFeatures.push(feature);
+        }
+      });
+
+      // Find matching LTNs
+      ltnData.features.forEach((feature) => {
+        // Handle queries with different capitalization
+        // than the source data by calling toLowerCase().
+        if (
+          feature.properties.Name.toLowerCase().includes(query.toLowerCase())
+        ) {
+          feature["place_name"] = `🚧 ${feature.properties.Name}`;
+          feature["center"] = feature.properties.centre.coordinates;
+          feature["place_type"] = ["poi"];
+          matchingFeatures.push(feature);
+        }
+      });
+
+      return matchingFeatures;
+    };
+
+    console.log("Setting forwardGeocoder", forwardGeocoder);
+    setForwardGeocoderFunc(() => forwardGeocoder);
+  }, [siteData, ltnData]);
 
   return (
     <>
@@ -203,20 +221,19 @@ function MyMap({ siteData, ltnData, boroughData }) {
           longitude: -0.1304413,
           zoom: 10,
         }}
-        style={{ height: 600 }}
+        style={{ height: 700 }}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
         <GeocoderControl
           mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-          position="bottom-right"
+          position="bottom-left"
           proximity={{
             longitude: -0.1245982,
             latitude: 51.50876,
           }}
-          localGeocoder={forwardGeocoder}
         />
-        <NavigationControl position="bottom-right" />
+        <NavigationControl position="bottom-left" />
         <Source type="geojson" data={ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
