@@ -1,5 +1,8 @@
 // For more information on data-driven styles, see https://www.mapbox.com/help/gl-dds-ref/
 
+export const primaryNodeColour = "#ed936b";
+export const comparisonNodeColour = "#7dc0a7";
+
 export const ltnFillDataLayer = {
   id: "ltn_areas_fill",
   type: "fill",
@@ -51,7 +54,7 @@ export const pm25Layer = {
     "circle-color": [
       "case",
       ["boolean", ["feature-state", "selected"], false],
-      "#ff0000",
+      primaryNodeColour,
       ["match", ["get", "status"], "healthy", "#69bdc7", /* other */ "#aaa"],
     ],
 
@@ -66,7 +69,7 @@ export const pm25Layer = {
     "circle-stroke-color": [
       "case",
       ["boolean", ["feature-state", "selected"], false],
-      "#ff0000",
+      primaryNodeColour,
       "#ffffff",
     ],
     "circle-opacity": [
@@ -86,7 +89,7 @@ export const no2Layer = {
     "circle-color": [
       "case",
       ["boolean", ["feature-state", "selected"], false],
-      "#ff0000",
+      primaryNodeColour,
       ["match", ["get", "status"], "healthy", "#b88c49", /* other */ "#aaa"],
     ],
 
@@ -101,7 +104,7 @@ export const no2Layer = {
     "circle-stroke-color": [
       "case",
       ["boolean", ["feature-state", "selected"], false],
-      "#ff0000",
+      primaryNodeColour,
       "#ffffff",
     ],
     "circle-opacity": [

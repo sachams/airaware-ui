@@ -1,3 +1,5 @@
+@import "rsuite/dist/rsuite.css";
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -15,3 +17,4 @@ code {
   .hover-info {
     font-size: 12px;
   }
+
