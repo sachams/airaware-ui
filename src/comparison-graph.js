@@ -35,7 +35,7 @@ function ComparisonGraph(props) {
         const data = primaryData.data.map((d) => ({
           time: new Date(d.time),
           value: d.value,
-          type: primaryNode.name,
+          type: "Node",
         }));
 
         setIsLoading(false);
@@ -100,8 +100,16 @@ function ComparisonGraph(props) {
     const plot = Plot.plot({
       color: {
         legend: true,
-        domain: ["Comparison", primaryNode.name],
+        domain: ["Comparison", "Node"],
         range: [comparisonNodeColour, primaryNodeColour],
+      },
+      marginLeft: 60,
+      marginBottom: 40,
+      y: {
+        label: `↑ ${series} concentration (ug/m3)`,
+      },
+      style: {
+        fontSize: 16,
       },
       // color: { legend: true, scheme: "Set2" },
       title: `${series.toUpperCase()} concentration`,
@@ -110,7 +118,7 @@ function ComparisonGraph(props) {
         Plot.ruleX(data, Plot.pointerX({ x: "time", stroke: "red" })),
 
         Plot.dot(
-          data.filter((d) => d.type == primaryNode.name),
+          data.filter((d) => d.type == "Node"),
           Plot.pointerX({ x: "time", y: "value", stroke: "type" })
         ),
         Plot.dot(
@@ -119,35 +127,36 @@ function ComparisonGraph(props) {
         ),
 
         Plot.text(
-          data.filter((d) => d.type == primaryNode.name),
-          Plot.pointerX({
-            x: "time",
-            frameAnchor: "top-left",
-            dx: 10,
-            fontVariant: "tabular-nums",
-            text: (d) => `${d.type}: ${d.value.toFixed(2)}`,
-          })
-        ),
-        Plot.text(
           data.filter((d) => d.type == "Comparison"),
           Plot.pointerX({
             x: "time",
             frameAnchor: "top-left",
             dx: 10,
-            dy: -10,
-            fontVariant: "tabular-nums",
-            text: (d) => `${d.type}: ${d.value.toFixed(2)}`,
-          })
-        ),
-        Plot.text(
-          data.filter((d) => d.type == "Comparison"),
-          Plot.pointerX({
-            x: "time",
-            frameAnchor: "top-left",
-            dx: 10,
-            dy: -20,
+            dy: 0,
             fontVariant: "tabular-nums",
             text: (d) => `${d.time.toLocaleString()}`,
+          })
+        ),
+        Plot.text(
+          data.filter((d) => d.type == "Node"),
+          Plot.pointerX({
+            x: "time",
+            frameAnchor: "top-left",
+            dx: 10,
+            dy: 20,
+            fontVariant: "tabular-nums",
+            text: (d) => `${d.type}: ${d.value.toFixed(2)}`,
+          })
+        ),
+        Plot.text(
+          data.filter((d) => d.type == "Comparison"),
+          Plot.pointerX({
+            x: "time",
+            frameAnchor: "top-left",
+            dx: 10,
+            dy: 40,
+            fontVariant: "tabular-nums",
+            text: (d) => `${d.type}: ${d.value.toFixed(2)}`,
           })
         ),
 
