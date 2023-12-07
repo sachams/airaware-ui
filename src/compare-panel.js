@@ -123,14 +123,6 @@ function ComparePanel({ siteData, selectedNode }) {
 
   return (
     <div className="compare-panel">
-      {selectedNode && (
-        <h1 className="panel-heading">
-          {selectedNode.site_code} - {selectedNode.name}
-        </h1>
-      )}
-      {!selectedNode && (
-        <h1 className="panel-heading">Select a primary node from the map</h1>
-      )}
       <CheckTreePicker
         defaultExpandAll={false}
         placeholder="Select comparison"

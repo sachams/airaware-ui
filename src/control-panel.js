@@ -34,6 +34,7 @@ function ControlPanel(props) {
       <CheckPicker
         onChange={onFeaturesChange}
         placeholder="Features"
+        searchable={false}
         data={featureData}
         size="xs"
       />

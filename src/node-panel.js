@@ -6,15 +6,6 @@ function NodePanel({ selectedNode }) {
   return (
     <div className="node-panel">
       {selectedNode && (
-        <h1 className="panel-heading">
-          {selectedNode.site_code} - {selectedNode.name}
-        </h1>
-      )}
-      {!selectedNode && (
-        <h1 className="panel-heading">Select a primary node from the map</h1>
-      )}
-
-      {selectedNode && (
         <div>
           <img src={selectedNode.photo_url} />
           <p>{selectedNode.description}</p>

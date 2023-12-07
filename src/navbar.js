@@ -9,9 +9,6 @@ const Navbar = ({ active, onSelect }) => {
       onSelect={onSelect}
       style={{ marginBottom: 10 }}
     >
-      <Nav.Item eventKey="home" icon={<HomeIcon />}>
-        Home
-      </Nav.Item>
       <Nav.Item eventKey="node">Node</Nav.Item>
       <Nav.Item eventKey="compare">Compare</Nav.Item>
       <Nav.Item eventKey="report">Report</Nav.Item>

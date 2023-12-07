@@ -27,6 +27,7 @@ import GeocoderControl from "./geocoder-control";
 import LtnPopup from "./ltn-popup";
 import NodePopup from "./node-popup";
 import SidePanel from "./side-panel";
+import { Loader } from "rsuite";
 
 function MyMap({ siteData, ltnData, boroughData }) {
   const mapRef = useRef();
@@ -123,6 +124,11 @@ function MyMap({ siteData, ltnData, boroughData }) {
       );
     }
   };
+  const onSidePanelClose = useCallback(() => {
+    setFeatureState(selectedFeature, false);
+    setSelectedFeature(null);
+  });
+
   const onClick = useCallback((event) => {
     if (event.features.length === 0) {
       setFeatureState(selectedFeature, false);
@@ -302,9 +308,11 @@ function MyMap({ siteData, ltnData, boroughData }) {
         />
         <SidePanel
           siteData={siteData}
+          onClose={onSidePanelClose}
           selectedNode={selectedFeature?.properties}
         />
       </Map>
+      {siteData.features.length == 0 && <Loader size="lg" center />}
     </>
   );
 }
