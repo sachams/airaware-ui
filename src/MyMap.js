@@ -79,6 +79,11 @@ function MyMap({ siteData, ltnData, boroughData }) {
   };
   const interactiveLayerIds = ["ltn_areas_fill", "no2Layer", "pm25Layer"];
 
+  // If the mouse leaves the canvas, remove the popover
+  const onMouseOut = useCallback((event) => {
+    setHoverInfo(null);
+  });
+
   const onMouseMove = useCallback((event) => {
     if (event.features.length === 0) {
       setHoverInfo(null);
@@ -211,6 +216,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
         mapLib={import("mapbox-gl")}
         ref={mapRef}
         onMouseMove={onMouseMove}
+        onMouseOut={onMouseOut}
         onClick={onClick}
         interactiveLayerIds={interactiveLayerIds}
         initialViewState={{
