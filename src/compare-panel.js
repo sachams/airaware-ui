@@ -4,9 +4,24 @@ import DateSelector from "./date-selector";
 
 import subDays from "date-fns/subDays";
 import set from "date-fns/set";
-import { SelectPicker, CheckTreePicker } from "rsuite";
+import {
+  Radio,
+  RadioGroup,
+  FlexboxGrid,
+  CheckTreePicker,
+  Divider,
+} from "rsuite";
 import "./compare-panel.css";
 import "./side-panel.css";
+
+const styles = {
+  radioGroup: {
+    margin: "0px 0px 5px",
+  },
+  radio: {
+    padding: "0px 5px 0px",
+  },
+};
 
 const defaultEndDate = set(new Date(), {
   hours: 0,
@@ -100,6 +115,10 @@ function ComparePanel({ siteData, selectedNode }) {
     setDateRange(dateRange);
   };
 
+  const onFrequencyChange = (value) => {
+    setFrequency(value);
+  };
+
   const onComparisonNodesChange = (siteCodes) => {
     const comparisonNodeArrays = siteCodes.map((d) => {
       // If the item is in the node map (ie, it is a site code)
@@ -123,19 +142,53 @@ function ComparePanel({ siteData, selectedNode }) {
 
   return (
     <div className="compare-panel">
-      <CheckTreePicker
-        defaultExpandAll={false}
-        placeholder="Select comparison"
-        size="sm"
-        onChange={onComparisonNodesChange}
-        uncheckableItemValues={[primaryNode?.site_code]}
-        disabledItemValues={[primaryNode?.site_code]}
-        data={nodeTypeTreeList}
-        style={{ width: "70%" }}
-      />
-      <DateSelector dateRange={dateRange} onChange={onDateChange} />
-      <div>
-        <div className="comparison-graph">
+      <FlexboxGrid align="middle">
+        <FlexboxGrid.Item colspan={3}>Comparison</FlexboxGrid.Item>
+        <FlexboxGrid.Item colspan={12}>
+          <CheckTreePicker
+            defaultExpandAll={false}
+            placeholder="Select comparison"
+            size="sm"
+            onChange={onComparisonNodesChange}
+            uncheckableItemValues={[primaryNode?.site_code]}
+            disabledItemValues={[primaryNode?.site_code]}
+            data={nodeTypeTreeList}
+            style={{ width: "70%" }}
+          />
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
+      <FlexboxGrid align="middle">
+        <FlexboxGrid.Item colspan={3}>Date</FlexboxGrid.Item>
+        <FlexboxGrid.Item colspan={12}>
+          <DateSelector dateRange={dateRange} onChange={onDateChange} />
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
+
+      <FlexboxGrid align="middle">
+        <FlexboxGrid.Item colspan={3}>Frequency</FlexboxGrid.Item>
+        <FlexboxGrid.Item colspan={12}>
+          <RadioGroup
+            onChange={onFrequencyChange}
+            name="frequency"
+            inline
+            appearance="picker"
+            defaultValue={frequency}
+            style={styles.radioGroup}
+          >
+            <Radio style={styles.radio} value="hour">
+              Hourly
+            </Radio>
+            <Radio style={styles.radio} value="day">
+              Daily
+            </Radio>
+          </RadioGroup>
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
+
+      <Divider />
+      <FlexboxGrid>
+        <FlexboxGrid.Item colspan={12}>
+          {" "}
           <ComparisonGraph
             primaryNode={primaryNode}
             comparisonNodes={comparisonNodes}
@@ -143,8 +196,8 @@ function ComparePanel({ siteData, selectedNode }) {
             dateRange={dateRange}
             frequency={frequency}
           />
-        </div>
-        <div className="comparison-graph">
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item colspan={12}>
           <ComparisonGraph
             primaryNode={primaryNode}
             comparisonNodes={comparisonNodes}
@@ -152,8 +205,8 @@ function ComparePanel({ siteData, selectedNode }) {
             dateRange={dateRange}
             frequency={frequency}
           />
-        </div>
-      </div>
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
     </div>
   );
 }
