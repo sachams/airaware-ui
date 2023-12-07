@@ -37,32 +37,9 @@
   }
 }
 
-.control-panel {
-  font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  border-radius: 5px;
-  background-color: rgb(255, 255, 255);
-  padding: 10px;
-  z-index: 10;
-  display: flex;
-  flex-flow: column;
-  justify-content: space-between;
-}
 
 .site-info {
   flex: 1;
-}
-
-.comparison-graph-collapsed {
-  width: 100%;
-}
-
-.comparison-graph-expanded {
-  width: 50%;
-  display: inline-block
 }
 
 .graph-wrapper {

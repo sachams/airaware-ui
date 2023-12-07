@@ -4,72 +4,113 @@ import * as Plot from "@observablehq/plot";
 import { useEffect, useRef, useState } from "react";
 import { primaryNodeColour, comparisonNodeColour } from "./mapStyle";
 import "./comparison-graph.css";
+import { Loader } from "rsuite";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
 function ComparisonGraph(props) {
-  const { primary, comparison, series, dateRange, frequency } = props;
+  const { primaryNode, comparisonNodes, series, dateRange, frequency } = props;
 
   const containerRef = useRef();
-  const [data, setData] = useState();
+  const [primaryData, setPrimaryData] = useState([]);
+  const [comparisonData, setComparisonData] = useState([]);
   const [startDate, endDate] = dateRange;
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log("Fetching series data from server");
+        console.log("Fetching primary series data from server");
+        setIsLoading(true);
 
         // Load all the data asynchronously and wait for the result
-        const [primaryData, comparisonData] = await Promise.all([
+        const [primaryData] = await Promise.all([
           axios.get(
             `${serverUrl}/sensor/${series}/${startDate.toISOString()}/${endDate.toISOString()}/${frequency}?codes=${
-              primary.site_code
+              primaryNode.site_code
             }`
-          ),
-          axios.get(
-            `${serverUrl}/sensor/${series}/${startDate.toISOString()}/${endDate.toISOString()}/${frequency}?codes=CLDP0001`
           ),
         ]);
 
-        const primaryDataRemapped = primaryData.data.map((d) => ({
+        const data = primaryData.data.map((d) => ({
           time: new Date(d.time),
           value: d.value,
-          type: primary.name,
+          type: primaryNode.name,
         }));
-        const comparisonDataRemapped = comparisonData.data.map((d) => ({
-          time: new Date(d.time),
-          value: d.value,
-          type: "Comparison",
-        }));
-        const data = primaryDataRemapped.concat(comparisonDataRemapped);
-        // const data = primaryDataRemapped;
 
-        setData(data);
+        setIsLoading(false);
+        setPrimaryData(data);
       } catch (error) {
         console.error("Error fetching sensor data:", error);
       }
     };
 
-    loadData();
-  }, [primary, comparison, series, startDate, endDate, frequency]);
+    if (primaryNode) {
+      loadData();
+    } else {
+      setPrimaryData([]);
+    }
+  }, [primaryNode, series, startDate, endDate, frequency]);
 
   useEffect(() => {
-    console.log("Plot - data is ", data);
-    if (data === undefined) return;
+    const loadData = async () => {
+      try {
+        console.log("Fetching comparison series data from server");
+        setIsLoading(true);
+
+        // Load all the data asynchronously and wait for the result
+        const [comparisonData] = await Promise.all([
+          axios.get(
+            `${serverUrl}/sensor/${series}/${startDate.toISOString()}/${endDate.toISOString()}/${frequency}?${comparisonNodes
+              .filter((node) => {
+                return node.site_code !== primaryNode.site_code;
+              })
+              .map((node) => "codes=" + node.site_code)
+              .join("&")}`
+          ),
+        ]);
+
+        const data = comparisonData.data.map((d) => ({
+          time: new Date(d.time),
+          value: d.value,
+          type: "Comparison",
+        }));
+        setIsLoading(false);
+        setComparisonData(data);
+      } catch (error) {
+        console.error("Error fetching sensor data:", error);
+      }
+    };
+
+    if (comparisonNodes.length > 0) {
+      loadData();
+    } else {
+      setComparisonData([]);
+    }
+  }, [comparisonNodes, series, startDate, endDate, frequency]);
+
+  useEffect(() => {
+    if (!primaryNode || !comparisonNodes) {
+      return;
+    }
+    const data = primaryData.concat(comparisonData);
+
+    if (data.length == 0) return;
+
     const plot = Plot.plot({
       color: {
         legend: true,
-        domain: ["Comparison", primary.name],
+        domain: ["Comparison", primaryNode.name],
         range: [comparisonNodeColour, primaryNodeColour],
       },
       // color: { legend: true, scheme: "Set2" },
-      title: series.toUpperCase(),
+      title: `${series.toUpperCase()} concentration`,
       marks: [
         Plot.ruleY([0]),
         Plot.ruleX(data, Plot.pointerX({ x: "time", stroke: "red" })),
 
         Plot.dot(
-          data.filter((d) => d.type == primary.name),
+          data.filter((d) => d.type == primaryNode.name),
           Plot.pointerX({ x: "time", y: "value", stroke: "type" })
         ),
         Plot.dot(
@@ -78,7 +119,7 @@ function ComparisonGraph(props) {
         ),
 
         Plot.text(
-          data.filter((d) => d.type == primary.name),
+          data.filter((d) => d.type == primaryNode.name),
           Plot.pointerX({
             x: "time",
             frameAnchor: "top-left",
@@ -121,9 +162,14 @@ function ComparisonGraph(props) {
 
     containerRef.current.append(plot);
     return () => plot.remove();
-  }, [data]);
+  }, [primaryData, comparisonData]);
 
-  return <div class="comparison-graph" ref={containerRef} />;
+  return (
+    <div>
+      <div className="comparison-graph" ref={containerRef} />
+      {isLoading && <Loader size="md" center />}
+    </div>
+  );
 }
 
 export default React.memo(ComparisonGraph);

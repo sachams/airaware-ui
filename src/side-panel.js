@@ -1,60 +1,30 @@
 import React, { useState } from "react";
-import ComparisonGraph from "./comparison-graph";
-import DateSelector from "./date-selector";
-
-import subDays from "date-fns/subDays";
-import subYears from "date-fns/subYears";
-import set from "date-fns/set";
+import Navbar from "./navbar";
+import ComparePanel from "./compare-panel";
+import HomePanel from "./home-panel";
+import ReportPanel from "./report-panel";
+import NodePanel from "./node-panel";
 
 import "./side-panel.css";
 
-const defaultEndDate = set(new Date(), {
-  hours: 0,
-  minutes: 0,
-  seconds: 0,
-  milliseconds: 0,
-});
+function SidePanel({ siteData, selectedNode }) {
+  const [activeTab, setActiveTab] = useState("home");
 
-function SidePanel({ nodeProperties }) {
-  const [dateRange, setDateRange] = useState([
-    subDays(defaultEndDate, 30),
-    defaultEndDate,
-  ]);
-
-  const [frequency, setFrequency] = useState("hour");
-  const [state, setState] = useState("collapsed");
-
-  const onDateChange = (dateRange) => {
-    setDateRange(dateRange);
+  const onActiveTabSelect = (activeTab) => {
+    setActiveTab(activeTab);
   };
 
   return (
-    <div className={"side-panel-" + state}>
-      <h1 className="side-panel-title">
-        {nodeProperties.site_code} - {nodeProperties.name}
-      </h1>
-
-      <DateSelector dateRange={dateRange} onChange={onDateChange} />
-      <div>
-        <div className={"comparison-graph-" + state}>
-          <ComparisonGraph
-            primary={nodeProperties}
-            comparison={nodeProperties}
-            series="pm25"
-            dateRange={dateRange}
-            frequency={frequency}
-          />
-        </div>
-        <div className={"comparison-graph-" + state}>
-          <ComparisonGraph
-            primary={nodeProperties}
-            comparison={nodeProperties}
-            series="no2"
-            dateRange={dateRange}
-            frequency={frequency}
-          />
-        </div>
-      </div>
+    <div className="side-panel">
+      <Navbar active={activeTab} onSelect={onActiveTabSelect} />
+      {activeTab === "home" && <HomePanel />}
+      {activeTab === "node" && (
+        <NodePanel siteData={siteData} selectedNode={selectedNode} />
+      )}
+      {activeTab === "compare" && (
+        <ComparePanel siteData={siteData} selectedNode={selectedNode} />
+      )}
+      {activeTab === "report" && <ReportPanel selectedNode={selectedNode} />}
     </div>
   );
 }

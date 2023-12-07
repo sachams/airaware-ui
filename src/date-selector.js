@@ -47,7 +47,7 @@ function DateSelector({ dateRange, onChange }) {
       defaultValue={dateRange}
       size="sm"
       shouldDisableDate={afterToday()}
-      style={{ width: 300 }}
+      style={{ width: "70%" }}
       onShortcutClick={(shortcut, event) => {
         console.log(shortcut);
       }}

@@ -55,10 +55,9 @@ function MyMap({ siteData, ltnData, boroughData }) {
     );
   };
 
-  const [ltnVisibility, setLtnVisibility] = useState(true);
+  const [features, setFeatures] = useState([]);
   const [forwardGeocoderFunc, setForwardGeocoderFunc] = useState(undefined);
 
-  const [boroughVisibility, setBoroughVisibility] = useState(false);
   const [series, setSeries] = useState("pm25");
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedFeature, setSelectedFeature] = useState(null);
@@ -70,6 +69,14 @@ function MyMap({ siteData, ltnData, boroughData }) {
     [selectedSiteCode]
   );
 
+  const featureData = [
+    { label: "LTNs", value: "ltn" },
+    { label: "Boroughs", value: "borough" },
+  ];
+  const onFeaturesChange = (features) => {
+    console.log("Features: ", features);
+    setFeatures(features);
+  };
   const interactiveLayerIds = ["ltn_areas_fill", "no2Layer", "pm25Layer"];
 
   const onMouseMove = useCallback((event) => {
@@ -139,19 +146,9 @@ function MyMap({ siteData, ltnData, boroughData }) {
     }
   });
 
-  const updateSeries = (event) => {
-    console.log("Setting series to ", event.target.value);
-    setSeries(event.target.value);
-  };
-
-  const updateLtnVisibility = () => {
-    setLtnVisibility(!ltnVisibility);
-    console.log("Updating LTN visibility to ", !ltnVisibility);
-  };
-
-  const updateBoroughVisibility = () => {
-    setBoroughVisibility(!boroughVisibility);
-    console.log("Updating Borough visibility to ", !boroughVisibility);
+  const updateSeries = (value) => {
+    console.log("Setting series to ", value);
+    setSeries(value);
   };
 
   useEffect(() => {
@@ -237,22 +234,30 @@ function MyMap({ siteData, ltnData, boroughData }) {
         <Source type="geojson" data={ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
-            layout={{ visibility: ltnVisibility ? "visible" : "none" }}
+            layout={{
+              visibility: features.includes("ltn") ? "visible" : "none",
+            }}
           />
           <Layer
             {...ltnOutlineDataLayer}
-            layout={{ visibility: ltnVisibility ? "visible" : "none" }}
+            layout={{
+              visibility: features.includes("ltn") ? "visible" : "none",
+            }}
           />
         </Source>
 
         <Source type="geojson" data={boroughData} generateId={true}>
           <Layer
             {...boroughFillDataLayer}
-            layout={{ visibility: boroughVisibility ? "visible" : "none" }}
+            layout={{
+              visibility: features.includes("borough") ? "visible" : "none",
+            }}
           />
           <Layer
             {...boroughOutlineDataLayer}
-            layout={{ visibility: boroughVisibility ? "visible" : "none" }}
+            layout={{
+              visibility: features.includes("borough") ? "visible" : "none",
+            }}
           />
         </Source>
 
@@ -284,16 +289,15 @@ function MyMap({ siteData, ltnData, boroughData }) {
           />
         </Source>
         <ControlPanel
-          ltnVisibility={ltnVisibility}
-          onLtnChange={updateLtnVisibility}
-          boroughVisibility={boroughVisibility}
-          onBoroughChange={updateBoroughVisibility}
+          featureData={featureData}
+          onFeaturesChange={onFeaturesChange}
           onSeriesChange={updateSeries}
           seriesValue={series}
         />
-        {selectedFeature && (
-          <SidePanel nodeProperties={selectedFeature.properties} />
-        )}
+        <SidePanel
+          siteData={siteData}
+          selectedNode={selectedFeature?.properties}
+        />
       </Map>
     </>
   );
