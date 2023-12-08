@@ -27,6 +27,7 @@ import GeocoderControl from "./geocoder-control";
 import LtnPopup from "./ltn-popup";
 import NodePopup from "./node-popup";
 import SidePanel from "./side-panel";
+import AboutDrawer from "./about-drawer";
 import { Loader } from "rsuite";
 
 function MyMap({ siteData, ltnData, boroughData }) {
@@ -58,6 +59,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
 
   const [features, setFeatures] = useState([]);
   const [forwardGeocoderFunc, setForwardGeocoderFunc] = useState(undefined);
+  const [aboutDrawerOpen, setAboutDrawerOpen] = useState(false);
 
   const [series, setSeries] = useState("pm25");
   const [hoverInfo, setHoverInfo] = useState(null);
@@ -79,6 +81,10 @@ function MyMap({ siteData, ltnData, boroughData }) {
     setFeatures(features);
   };
   const interactiveLayerIds = ["ltn_areas_fill", "no2Layer", "pm25Layer"];
+
+  const onLogoClick = () => {
+    setAboutDrawerOpen(true);
+  };
 
   // If the mouse leaves the canvas, remove the popover
   const onMouseOut = useCallback((event) => {
@@ -236,13 +242,13 @@ function MyMap({ siteData, ltnData, boroughData }) {
       >
         <GeocoderControl
           mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-          position="bottom-left"
+          position="bottom-right"
           proximity={{
             longitude: -0.1245982,
             latitude: 51.50876,
           }}
         />
-        <NavigationControl position="bottom-left" />
+        <NavigationControl position="bottom-right" />
         <Source type="geojson" data={ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
@@ -310,6 +316,15 @@ function MyMap({ siteData, ltnData, boroughData }) {
           siteData={siteData}
           onClose={onSidePanelClose}
           selectedNode={selectedFeature?.properties}
+        />
+        <AboutDrawer
+          isOpen={aboutDrawerOpen}
+          setAboutDrawerOpen={setAboutDrawerOpen}
+        />
+        <img
+          src="/logo-small-transparent.png"
+          className="logo"
+          onClick={() => setAboutDrawerOpen(true)}
         />
       </Map>
       {siteData.features.length == 0 && <Loader size="lg" center />}
