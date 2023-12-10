@@ -38,7 +38,7 @@ function SidePanel({ siteData, selectedNode, onClose }) {
         {activeTab === "compare" && (
           <ComparePanel siteData={siteData} selectedNode={selectedNode} />
         )}
-        {activeTab === "report" && <ReportPanel selectedNode={selectedNode} />}
+        {activeTab === "report" && <ReportPanel primaryNode={selectedNode} />}
       </Drawer.Body>
     </Drawer>
   );

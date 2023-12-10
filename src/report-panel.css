@@ -5,3 +5,9 @@
   width: 100%;
   display: flex;
 }
+
+.show-grid {
+    padding: 10px 5px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
