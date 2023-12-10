@@ -60,15 +60,27 @@ function BreachCalendar(props) {
       },
       // color: { legend: true, scheme: "Set2" },
       title: `${series.toUpperCase()} daily WHO breaches`,
-      // subtitle:
-      //   "Red circles are days where the WHO 24h average limit was breached",
+      subtitle: `Red - WHO 24h limit of ${threshold.toFixed()} ug/m3 breached`,
       marginLeft: 60,
       marginBottom: 40,
+      x: {
+        tickSize: 0,
+      },
+
       y: {
         tickFormat: formatMonthYear,
+        tickSize: 0,
+        type: "point",
       },
+
+      color: {
+        type: "threshold",
+        domain: [threshold],
+        range: ["green", "red"],
+      },
+
       marks: [
-        Plot.cell(primaryData, {
+        Plot.dot(primaryData, {
           x: (d) => d.time.getUTCDate(),
           y: (d) =>
             set(d.time, {
@@ -80,7 +92,24 @@ function BreachCalendar(props) {
             }),
           fill: "value",
           inset: 0.5,
+          r: 7,
         }),
+        Plot.tip(
+          primaryData,
+          Plot.pointer({
+            x: (d) => d.time.getUTCDate(),
+            y: (d) =>
+              set(d.time, {
+                date: 1,
+                hours: 0,
+                minutes: 0,
+                seconds: 0,
+                milliseconds: 0,
+              }),
+            title: (d) =>
+              `${format(d.time, "dd MMM yy")} - ${d.value.toFixed(2)} ug/m3`,
+          })
+        ),
       ],
     });
 

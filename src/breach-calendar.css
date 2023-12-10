@@ -6,5 +6,11 @@
 h2 {
     font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
     margin: 0;
-  }
-  
+    font-weight: bold;
+}
+
+h3 {
+  font: 10px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+    
