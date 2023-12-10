@@ -6,6 +6,7 @@ import set from "date-fns/set";
 import { Radio, RadioGroup, FlexboxGrid, Divider } from "rsuite";
 import "./report-panel.css";
 import BreachCalendar from "./breach-calendar";
+import HourOfDayGraph from "./hour-of-day-graph";
 import { Grid, Row, Col } from "rsuite";
 
 const styles = {
@@ -55,6 +56,25 @@ function ReportPanel({ primaryNode }) {
           </Col>
           <Col xs={12}>
             <BreachCalendar
+              primaryNode={primaryNode}
+              series="no2"
+              dateRange={dateRange}
+              threshold={25}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12}>
+            {" "}
+            <HourOfDayGraph
+              primaryNode={primaryNode}
+              series="pm25"
+              dateRange={dateRange}
+              threshold={15}
+            />
+          </Col>
+          <Col xs={12}>
+            <HourOfDayGraph
               primaryNode={primaryNode}
               series="no2"
               dateRange={dateRange}

@@ -106,7 +106,8 @@ function ComparisonGraph(props) {
       marginLeft: 60,
       marginBottom: 40,
       y: {
-        label: `↑ ${series} concentration (ug/m3)`,
+        label: `${series} concentration (ug/m3)`,
+        labelAnchor: "center",
       },
       style: {
         fontSize: 16,
