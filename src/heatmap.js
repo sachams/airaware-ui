@@ -2,14 +2,13 @@ import axios from "axios";
 import * as React from "react";
 import * as Plot from "@observablehq/plot";
 import { useEffect, useRef, useState } from "react";
-import "./breach-calendar.css";
+import "./heatmap.css";
 import { Loader } from "rsuite";
 import { format, set } from "date-fns";
-import { primaryNodeColour } from "./mapStyle";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
-function HourOfDayGraph(props) {
+function Heatmap(props) {
   const { primaryNode, series, dateRange, threshold } = props;
 
   const containerRef = useRef();
@@ -47,6 +46,10 @@ function HourOfDayGraph(props) {
     loadData();
   }, [primaryNode, series, startDate, endDate, threshold]);
 
+  const formatDay = (d) => {
+    return format(d, "ddd");
+  };
+
   useEffect(() => {
     if (primaryData.length == 0) return;
 
@@ -54,56 +57,43 @@ function HourOfDayGraph(props) {
       style: {
         fontSize: 14,
       },
-      title: `${series.toUpperCase()} by hour of day`,
-      subtitle: `Red line - WHO 24h limit. Black line - average reading`,
+      // color: { legend: true, scheme: "Set2" },
+      title: `${series.toUpperCase()} by hour and day of week`,
       marginLeft: 60,
       marginBottom: 40,
       x: {
+        tickSize: 0,
         label: "Hour of day",
-        tickSize: 2,
-      },
-      y: {
-        label: `${series.toUpperCase()} concentration (ug/m3)`,
-        labelAnchor: "center",
       },
 
-      // color: {
-      //   fill: "#2d60a7",
-      // },
+      y: {
+        tickFormat: Plot.formatWeekday("en", "short"),
+        label: "Day of week",
+      },
+
+      color: {
+        type: "linear",
+        legend: true,
+        scheme: "YlGnBu",
+        reverse: true,
+        zero: true,
+        label: `${series.toUpperCase()} concentration (ug/m3)`,
+      },
 
       marks: [
-        Plot.barY(
+        Plot.cell(
           primaryData,
-          Plot.groupX(
-            { y: "mean" },
-
+          Plot.group(
+            { fill: "mean" },
             {
               x: (d) => d.time.getUTCHours(),
-              y: (d) => d.value,
-              fill: primaryNodeColour,
+              y: (d) => d.time.getUTCDay(),
+              fill: "value",
+              inset: 0.5,
               tip: "x",
             }
           )
         ),
-        // Add aerage line
-        Plot.ruleY(
-          primaryData,
-          Plot.groupZ(
-            { y: "mean" },
-            {
-              y: (d) => d.value,
-              stroke: "black",
-              strokeWidth: 2,
-              strokeDasharray: "4",
-            }
-          )
-        ),
-        // Add threshold
-        Plot.ruleY([threshold], {
-          stroke: "red",
-          strokeWidth: 2,
-          strokeDasharray: "4",
-        }),
       ],
     });
 
@@ -119,4 +109,4 @@ function HourOfDayGraph(props) {
   );
 }
 
-export default React.memo(HourOfDayGraph);
+export default React.memo(Heatmap);

@@ -7,6 +7,7 @@ import { Radio, RadioGroup, FlexboxGrid, Divider } from "rsuite";
 import "./report-panel.css";
 import BreachCalendar from "./breach-calendar";
 import HourOfDayGraph from "./hour-of-day-graph";
+import Heatmap from "./heatmap";
 import { Grid, Row, Col } from "rsuite";
 
 const styles = {
@@ -38,13 +39,13 @@ function ReportPanel({ primaryNode }) {
   return (
     <div className="report-panel">
       <Grid fluid>
-        <Row gutter={16} className="show-grid">
+        <Row gutter={16} className="report-row">
           <Col xs={4}>Date range</Col>
           <Col xs={12}>
             <DateSelector dateRange={dateRange} onChange={onDateChange} />
           </Col>
         </Row>
-        <Row>
+        <Row className="report-row">
           <Col xs={12}>
             {" "}
             <BreachCalendar
@@ -63,7 +64,7 @@ function ReportPanel({ primaryNode }) {
             />
           </Col>
         </Row>
-        <Row>
+        <Row className="report-row">
           <Col xs={12}>
             {" "}
             <HourOfDayGraph
@@ -75,6 +76,25 @@ function ReportPanel({ primaryNode }) {
           </Col>
           <Col xs={12}>
             <HourOfDayGraph
+              primaryNode={primaryNode}
+              series="no2"
+              dateRange={dateRange}
+              threshold={25}
+            />
+          </Col>
+        </Row>
+        <Row className="report-row">
+          <Col xs={12}>
+            {" "}
+            <Heatmap
+              primaryNode={primaryNode}
+              series="pm25"
+              dateRange={dateRange}
+              threshold={15}
+            />
+          </Col>
+          <Col xs={12}>
+            <Heatmap
               primaryNode={primaryNode}
               series="no2"
               dateRange={dateRange}

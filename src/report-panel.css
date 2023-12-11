@@ -6,8 +6,9 @@
   display: flex;
 }
 
-.show-grid {
+.report-row {
     padding: 10px 5px;
     margin-top: 6px;
     margin-bottom: 6px;
 }
+

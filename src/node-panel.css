@@ -7,6 +7,9 @@
 
 img {
   width: 50%;
+  max-width: 300px;
+  height: auto;
+  aspect-ratio: 1/1;
 }
 td {
   padding: 1px 5px 1px;
