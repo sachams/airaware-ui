@@ -43,7 +43,9 @@ function Heatmap(props) {
       }
     };
 
-    loadData();
+    if (primaryNode) {
+      loadData();
+    }
   }, [primaryNode, series, startDate, endDate, threshold]);
 
   const formatDay = (d) => {

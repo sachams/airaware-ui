@@ -33,11 +33,7 @@ function NodePanel({ selectedNode }) {
                   </tr>
                   <tr>
                     <td>Status</td>
-                    <td>
-                      {selectedNode.status === "healthy"
-                        ? "operational"
-                        : selectedNode.status}
-                    </td>
+                    <td>{selectedNode.enabled_status}</td>
                   </tr>
                   <tr>
                     <td>Borough</td>

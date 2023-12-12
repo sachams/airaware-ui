@@ -43,7 +43,9 @@ function BreachCalendar(props) {
       }
     };
 
-    loadData();
+    if (primaryNode) {
+      loadData();
+    }
   }, [primaryNode, series, startDate, endDate, threshold]);
 
   const formatMonthYear = (d) => {

@@ -44,7 +44,9 @@ function HourOfDayGraph(props) {
       }
     };
 
-    loadData();
+    if (primaryNode) {
+      loadData();
+    }
   }, [primaryNode, series, startDate, endDate, threshold]);
 
   useEffect(() => {

@@ -29,6 +29,7 @@ function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
     type: "Feature",
     properties: {
       ...site,
+      enabled_status: site.is_enabled ? "Enabled" : "Disabled",
       AveragePM25: siteAveragePM25Map[site.site_code],
       AverageNO2: siteAverageNO2MMap[site.site_code],
     },

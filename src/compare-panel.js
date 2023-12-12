@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ComparisonGraph from "./comparison-graph";
 import DateSelector from "./date-selector";
-
+import { Block, InfoOutline } from "@rsuite/icons";
 import subDays from "date-fns/subDays";
 import set from "date-fns/set";
 import {
@@ -13,6 +13,11 @@ import {
 } from "rsuite";
 import "./compare-panel.css";
 import "./side-panel.css";
+import { Tooltip, Whisper } from "rsuite";
+
+const selfTooltip = <Tooltip>This is already the primary node</Tooltip>;
+
+const disabledTooltip = <Tooltip>This node is disabled</Tooltip>;
 
 const styles = {
   radioGroup: {
@@ -111,6 +116,14 @@ function ComparePanel({ siteData, selectedNode }) {
     value: item.properties.site_code,
   }));
 
+  const disabledItems = siteData.features
+    .filter((d) => {
+      return !d.properties.is_enabled;
+    })
+    .map((d) => {
+      return d.properties.site_code;
+    });
+
   const onDateChange = (dateRange) => {
     setDateRange(dateRange);
   };
@@ -150,9 +163,47 @@ function ComparePanel({ siteData, selectedNode }) {
             placeholder="Select comparison"
             size="sm"
             onChange={onComparisonNodesChange}
-            uncheckableItemValues={[primaryNode?.site_code]}
-            disabledItemValues={[primaryNode?.site_code]}
+            uncheckableItemValues={[primaryNode?.site_code, ...disabledItems]}
+            disabledItemValues={[primaryNode?.site_code, ...disabledItems]}
             data={nodeTypeTreeList}
+            renderTreeNode={(nodeData) => {
+              console.log("Node data is ", nodeData);
+              // console.log("PrimaryNode is ", primaryNode);
+              if (nodeData.properties == undefined) {
+                // Top level category
+                return <span>{nodeData.label}</span>;
+              } else if (
+                nodeData.properties.site_code === primaryNode?.site_code
+              ) {
+                // It's the same node
+                return (
+                  <Whisper
+                    placement="top"
+                    trigger="hover"
+                    speaker={selfTooltip}
+                  >
+                    <span>
+                      <InfoOutline /> {nodeData.label}
+                    </span>
+                  </Whisper>
+                );
+              } else if (!nodeData.properties?.is_enabled) {
+                // It's disabled
+                return (
+                  <Whisper
+                    placement="top"
+                    trigger="hover"
+                    speaker={disabledTooltip}
+                  >
+                    <span>
+                      <Block /> {nodeData.label}
+                    </span>
+                  </Whisper>
+                );
+              } else {
+                return <span>{nodeData.label}</span>;
+              }
+            }}
             style={{ width: "70%" }}
           />
         </FlexboxGrid.Item>

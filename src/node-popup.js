@@ -26,11 +26,7 @@ function NodePopup({ longitude, latitude, properties }) {
             </tr>
             <tr>
               <td>Status</td>
-              <td>
-                {properties.status === "healthy"
-                  ? "operational"
-                  : properties.status}
-              </td>
+              <td>{properties.enabled_status}</td>
             </tr>
             <tr>
               <td>Average PM2.5</td>
