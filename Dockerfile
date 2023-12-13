@@ -43,5 +43,5 @@ COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
 # # Start the server by default, this can be overwritten at runtime
-# EXPOSE 3000
+EXPOSE 3000
 # CMD [ "yarn", "run", "start" ]
