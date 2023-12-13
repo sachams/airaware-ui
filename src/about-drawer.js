@@ -1,5 +1,6 @@
 import React from "react";
 import { Drawer } from "rsuite";
+import "./about-drawer.css";
 
 function AboutDrawer({ isOpen, setAboutDrawerOpen }) {
   return (
@@ -13,6 +14,8 @@ function AboutDrawer({ isOpen, setAboutDrawerOpen }) {
         <Drawer.Title>About Air Aware</Drawer.Title>
       </Drawer.Header>
       <Drawer.Body>
+        <h2>What is Air Aware?</h2>
+
         <p>
           Air Aware is a project set up by Sacha Manson-Smith and Louise Thomas
           to look at data from the{" "}
@@ -26,6 +29,7 @@ function AboutDrawer({ isOpen, setAboutDrawerOpen }) {
           </a>
           .
         </p>
+        <h2>Data sources</h2>
         <p>The data comes from the following sources:</p>
         <ul>
           <li>
@@ -44,6 +48,15 @@ function AboutDrawer({ isOpen, setAboutDrawerOpen }) {
             </a>
           </li>
         </ul>
+        <h2>Feedback</h2>
+        <p>
+          What should we build next? What problems are you trying to
+          investigate, and how can we build tools that will help? Please let us
+          know on our{" "}
+          <a href="https://air-aware.canny.io/" target="_blank">
+            Feature Requests board
+          </a>
+        </p>
       </Drawer.Body>
     </Drawer>
   );
