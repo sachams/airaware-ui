@@ -87,7 +87,7 @@ function HourOfDayGraph(props) {
             }
           )
         ),
-        // Add aerage line
+        // Add average line
         Plot.ruleY(
           primaryData,
           Plot.groupZ(

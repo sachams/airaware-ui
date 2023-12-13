@@ -114,6 +114,7 @@ function ComparisonGraph(props) {
       },
       // color: { legend: true, scheme: "Set2" },
       title: `${series.toUpperCase()} concentration`,
+      subtitle: "Dotted lines show average readings",
       marks: [
         Plot.ruleY([0]),
         Plot.ruleX(data, Plot.pointerX({ x: "time", stroke: "red" })),
@@ -167,6 +168,32 @@ function ComparisonGraph(props) {
           title: (d) => `${d.time} - ${d.value}`,
           stroke: "type",
         }),
+        // Add primary average line
+        Plot.ruleY(
+          data.filter((d) => d.type == "Node"),
+          Plot.groupZ(
+            { y: "mean" },
+            {
+              y: (d) => d.value,
+              stroke: primaryNodeColour,
+              strokeWidth: 2,
+              strokeDasharray: "4",
+            }
+          )
+        ),
+        // Add comparison average line
+        Plot.ruleY(
+          data.filter((d) => d.type == "Comparison"),
+          Plot.groupZ(
+            { y: "mean" },
+            {
+              y: (d) => d.value,
+              stroke: comparisonNodeColour,
+              strokeWidth: 2,
+              strokeDasharray: "4",
+            }
+          )
+        ),
       ],
     });
 
