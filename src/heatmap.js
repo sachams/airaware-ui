@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import "./heatmap.css";
 import { Loader } from "rsuite";
 import { format, set } from "date-fns";
+import { getSeriesName } from "./utils";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
@@ -60,7 +61,7 @@ function Heatmap(props) {
         fontSize: 14,
       },
       // color: { legend: true, scheme: "Set2" },
-      title: `${series.toUpperCase()} by hour and day of week`,
+      title: `${getSeriesName(series)} by hour and day of week`,
       marginLeft: 60,
       marginBottom: 40,
       x: {
@@ -79,7 +80,7 @@ function Heatmap(props) {
         scheme: "YlGnBu",
         reverse: true,
         zero: true,
-        label: `${series.toUpperCase()} concentration (ug/m3)`,
+        label: `${getSeriesName(series)} concentration (ug/m3)`,
       },
 
       marks: [

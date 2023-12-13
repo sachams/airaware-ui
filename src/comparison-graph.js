@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { primaryNodeColour, comparisonNodeColour } from "./mapStyle";
 import "./comparison-graph.css";
 import { Loader } from "rsuite";
+import { getSeriesName } from "./utils";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
@@ -106,14 +107,14 @@ function ComparisonGraph(props) {
       marginLeft: 60,
       marginBottom: 40,
       y: {
-        label: `${series} concentration (ug/m3)`,
+        label: `${getSeriesName(series)} concentration (ug/m3)`,
         labelAnchor: "center",
       },
       style: {
         fontSize: 16,
       },
       // color: { legend: true, scheme: "Set2" },
-      title: `${series.toUpperCase()} concentration`,
+      title: `${getSeriesName(series)} concentration`,
       subtitle: "Dotted lines show average readings",
       marks: [
         Plot.ruleY([0]),
@@ -164,7 +165,10 @@ function ComparisonGraph(props) {
 
         Plot.line(data, {
           x: { type: "time", value: "time" },
-          y: { value: "value", label: `${series} concentration (ug/m3)` },
+          y: {
+            value: "value",
+            label: `${getSeriesName(series)} concentration (ug/m3)`,
+          },
           title: (d) => `${d.time} - ${d.value}`,
           stroke: "type",
         }),

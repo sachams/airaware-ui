@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import "./breach-calendar.css";
 import { Loader } from "rsuite";
 import { format, set } from "date-fns";
+import { getSeriesName } from "./utils";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
@@ -61,7 +62,7 @@ function BreachCalendar(props) {
         fontSize: 14,
       },
       // color: { legend: true, scheme: "Set2" },
-      title: `${series.toUpperCase()} daily WHO breaches`,
+      title: `${getSeriesName(series)} daily WHO breaches`,
       subtitle: `Red - WHO 24h limit of ${threshold.toFixed()} ug/m3 breached`,
       marginLeft: 60,
       marginBottom: 40,

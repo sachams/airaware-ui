@@ -4,7 +4,7 @@ import * as Plot from "@observablehq/plot";
 import { useEffect, useRef, useState } from "react";
 import "./breach-calendar.css";
 import { Loader } from "rsuite";
-import { format, set } from "date-fns";
+import { getSeriesName } from "./utils";
 import { primaryNodeColour } from "./mapStyle";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -56,7 +56,7 @@ function HourOfDayGraph(props) {
       style: {
         fontSize: 14,
       },
-      title: `${series.toUpperCase()} by hour of day`,
+      title: `${getSeriesName(series)} by hour of day`,
       subtitle: `Red line - WHO 24h limit. Black line - average reading`,
       marginLeft: 60,
       marginBottom: 40,
@@ -65,7 +65,7 @@ function HourOfDayGraph(props) {
         tickSize: 2,
       },
       y: {
-        label: `${series.toUpperCase()} concentration (ug/m3)`,
+        label: `${getSeriesName(series)} concentration (ug/m3)`,
         labelAnchor: "center",
       },
 
