@@ -12,7 +12,13 @@ const styles = {
 };
 
 function ControlPanel(props) {
-  const { onSeriesChange, seriesValue, featureData, onFeaturesChange } = props;
+  const {
+    onSeriesChange,
+    seriesValue,
+    featureData,
+    onFeaturesChange,
+    featureValue,
+  } = props;
 
   return (
     <div className="control-panel">
@@ -36,6 +42,7 @@ function ControlPanel(props) {
         placeholder="Features"
         searchable={false}
         data={featureData}
+        value={featureValue}
         size="xs"
       />
     </div>

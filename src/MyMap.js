@@ -168,35 +168,35 @@ function MyMap({ siteData, ltnData, boroughData }) {
     setSeries(value);
   };
 
+  const onGeocoderResultSelected = (evt) => {
+    // If the result is an LTN, then make sure the LTN feature is selected
+    if (evt.result.place_type.includes("ltn")) {
+      if (!features.includes("ltn")) {
+        setFeatures([...features, "ltn"]);
+      }
+    }
+  };
+
   useEffect(() => {
     const forwardGeocoder = (query) => {
-      console.log("Entered forwardGeocoder");
-
       if (query === undefined || query.length == 0) {
-        console.log("query is undefined - returning");
         return [];
       }
       var matchingFeatures = [];
-
-      console.log("Query is ", query);
-      console.log("siteData is ", siteData);
-      console.log("ltnData is ", ltnData);
 
       // Find matching nodes
       siteData.features.forEach((feature) => {
         // Handle queries with different capitalization
         // than the source data by calling toLowerCase().
         if (
-          feature.properties.site_name
-            .toLowerCase()
-            .includes(query.toLowerCase())
+          feature.properties.name.toLowerCase().includes(query.toLowerCase())
         ) {
           // Add a tree emoji as a prefix for custom
           // data results using carmen geojson format:
           // https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
-          feature["place_name"] = `📍 ${feature.properties.site_name}`;
+          feature["place_name"] = `📍 ${feature.properties.name}`;
           feature["center"] = feature.geometry.coordinates;
-          feature["place_type"] = ["poi"];
+          feature["place_type"] = ["node"];
           matchingFeatures.push(feature);
         }
       });
@@ -210,7 +210,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
         ) {
           feature["place_name"] = `🚧 ${feature.properties.Name}`;
           feature["center"] = feature.properties.centre.coordinates;
-          feature["place_type"] = ["poi"];
+          feature["place_type"] = ["ltn"];
           matchingFeatures.push(feature);
         }
       });
@@ -218,8 +218,11 @@ function MyMap({ siteData, ltnData, boroughData }) {
       return matchingFeatures;
     };
 
-    console.log("Setting forwardGeocoder", forwardGeocoder);
-    setForwardGeocoderFunc(() => forwardGeocoder);
+    // Only set the forwardGeocoderFunc once we have data, as we can only set this once
+    // on the Geocoder component
+    if (siteData.features.length > 0) {
+      setForwardGeocoderFunc(() => forwardGeocoder);
+    }
   }, [siteData, ltnData]);
 
   return (
@@ -240,15 +243,24 @@ function MyMap({ siteData, ltnData, boroughData }) {
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
-        <GeocoderControl
-          mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-          position="bottom-right"
-          proximity={{
-            longitude: -0.1245982,
-            latitude: 51.50876,
-          }}
-        />
-        <NavigationControl position="bottom-right" />
+        /* The GeocoderControl doesn't respond to updates to the localGeocoder -
+        it only uses the first one it was created with. So we must only create
+        the control when the forwardGeocoderFunc has been set */
+        {forwardGeocoderFunc && (
+          <GeocoderControl
+            mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+            localGeocoder={forwardGeocoderFunc}
+            position="bottom-right"
+            onResult={onGeocoderResultSelected}
+            proximity={{
+              longitude: -0.1245982,
+              latitude: 51.50876,
+            }}
+          />
+        )}
+        /* Only create the NavigationControl once forwardGeocoderFunc has been
+        set, otherwise the order on the page will be wrong */
+        {forwardGeocoderFunc && <NavigationControl position="bottom-right" />}
         <Source type="geojson" data={ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
@@ -263,7 +275,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
             }}
           />
         </Source>
-
         <Source type="geojson" data={boroughData} generateId={true}>
           <Layer
             {...boroughFillDataLayer}
@@ -278,7 +289,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
             }}
           />
         </Source>
-
         {hoverInfo?.layerId === "ltn_areas_fill" && (
           <LtnPopup
             longitude={hoverInfo.longitude}
@@ -286,7 +296,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
             properties={hoverInfo.properties}
           />
         )}
-
         {(hoverInfo?.layerId === "no2Layer" ||
           hoverInfo?.layerId === "pm25Layer") && (
           <NodePopup
@@ -295,7 +304,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
             properties={hoverInfo.properties}
           />
         )}
-
         <Source id="nodes" type="geojson" data={siteData} generateId={true}>
           <Layer
             {...pm25Layer}
@@ -311,6 +319,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
           onFeaturesChange={onFeaturesChange}
           onSeriesChange={updateSeries}
           seriesValue={series}
+          featureValue={features}
         />
         <SidePanel
           siteData={siteData}

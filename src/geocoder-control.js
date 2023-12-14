@@ -3,6 +3,11 @@ import { useState } from "react";
 import { useControl, Marker, MarkerProps, ControlPosition } from "react-map-gl";
 import MapboxGeocoder, { GeocoderOptions } from "@mapbox/mapbox-gl-geocoder";
 
+// TODO: Investigate replacing this code with this component:
+// https://github.com/SamSamskies/react-map-gl-geocoder
+// It might mean we can remove the code to hold off creating
+// the Geocoder in MyMap until the forwardGeocoder has been created
+
 /* eslint-disable complexity,max-statements */
 export default function GeocoderControl(props) {
   const [marker, setMarker] = useState(null);
@@ -18,7 +23,6 @@ export default function GeocoderControl(props) {
       ctrl.on("results", props.onResults);
       ctrl.on("result", (evt) => {
         props.onResult(evt);
-        console.log("hello");
 
         const { result } = evt;
         const location =
