@@ -194,7 +194,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
           // Add a tree emoji as a prefix for custom
           // data results using carmen geojson format:
           // https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
-          feature["place_name"] = `📍 ${feature.properties.name}`;
+          feature["place_name"] = `📡 ${feature.properties.name}`;
           feature["center"] = feature.geometry.coordinates;
           feature["place_type"] = ["node"];
           matchingFeatures.push(feature);
@@ -252,6 +252,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
             localGeocoder={forwardGeocoderFunc}
             position="bottom-right"
             onResult={onGeocoderResultSelected}
+            placeholder="Find nodes or LTNs"
             proximity={{
               longitude: -0.1245982,
               latitude: 51.50876,
