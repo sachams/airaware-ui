@@ -167,7 +167,6 @@ function ComparePanel({ siteData, selectedNode }) {
             disabledItemValues={[primaryNode?.site_code, ...disabledItems]}
             data={nodeTypeTreeList}
             renderTreeNode={(nodeData) => {
-              console.log("Node data is ", nodeData);
               // console.log("PrimaryNode is ", primaryNode);
               if (nodeData.properties == undefined) {
                 // Top level category

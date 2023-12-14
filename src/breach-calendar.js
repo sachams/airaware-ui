@@ -50,7 +50,6 @@ function BreachCalendar(props) {
   }, [primaryNode, series, startDate, endDate, threshold]);
 
   const formatMonthYear = (d) => {
-    console.log("dt is ", d);
     return format(d, "MMM yy");
   };
 
