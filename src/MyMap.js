@@ -239,7 +239,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
           longitude: -0.1304413,
           zoom: 10,
         }}
-        style={{ height: 700 }}
+        style={{ height: "100vh", width: "100vw" }}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
