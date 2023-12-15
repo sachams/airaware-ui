@@ -5,7 +5,7 @@ import "./about-drawer.css";
 function AboutDrawer({ isOpen, setAboutDrawerOpen }) {
   return (
     <Drawer
-      size="sm"
+      size="full"
       backdrop={true}
       open={isOpen}
       onClose={() => setAboutDrawerOpen(false)}

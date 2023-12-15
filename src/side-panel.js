@@ -24,7 +24,7 @@ function SidePanel({ siteData, selectedNode, onClose }) {
   };
 
   return (
-    <Drawer size="lg" backdrop={true} open={!!selectedNode} onClose={onClose}>
+    <Drawer size="full" backdrop={true} open={!!selectedNode} onClose={onClose}>
       <Drawer.Header>
         <Drawer.Title>{selectedNode?.name}</Drawer.Title>
         <Drawer.Actions>

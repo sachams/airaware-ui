@@ -4,6 +4,7 @@ import DateSelector from "./date-selector";
 import { Block, InfoOutline } from "@rsuite/icons";
 import subDays from "date-fns/subDays";
 import set from "date-fns/set";
+import { Grid, Row, Col } from "rsuite";
 import {
   Radio,
   RadioGroup,
@@ -155,108 +156,111 @@ function ComparePanel({ siteData, selectedNode }) {
 
   return (
     <div className="compare-panel">
-      <FlexboxGrid align="middle">
-        <FlexboxGrid.Item colspan={3}>Comparison</FlexboxGrid.Item>
-        <FlexboxGrid.Item colspan={12}>
-          <CheckTreePicker
-            defaultExpandAll={false}
-            placeholder="Select comparison"
-            size="sm"
-            onChange={onComparisonNodesChange}
-            uncheckableItemValues={[primaryNode?.site_code, ...disabledItems]}
-            disabledItemValues={[primaryNode?.site_code, ...disabledItems]}
-            data={nodeTypeTreeList}
-            renderTreeNode={(nodeData) => {
-              // console.log("PrimaryNode is ", primaryNode);
-              if (nodeData.properties == undefined) {
-                // Top level category
-                return <span>{nodeData.label}</span>;
-              } else if (
-                nodeData.properties.site_code === primaryNode?.site_code
-              ) {
-                // It's the same node
-                return (
-                  <Whisper
-                    placement="top"
-                    trigger="hover"
-                    speaker={selfTooltip}
-                  >
-                    <span>
-                      <InfoOutline /> {nodeData.label}
-                    </span>
-                  </Whisper>
-                );
-              } else if (!nodeData.properties?.is_enabled) {
-                // It's disabled
-                return (
-                  <Whisper
-                    placement="top"
-                    trigger="hover"
-                    speaker={disabledTooltip}
-                  >
-                    <span>
-                      <Block /> {nodeData.label}
-                    </span>
-                  </Whisper>
-                );
-              } else {
-                return <span>{nodeData.label}</span>;
-              }
-            }}
-            style={{ width: "70%" }}
-          />
-        </FlexboxGrid.Item>
-      </FlexboxGrid>
-      <FlexboxGrid align="middle">
-        <FlexboxGrid.Item colspan={3}>Date</FlexboxGrid.Item>
-        <FlexboxGrid.Item colspan={12}>
+      <Grid fluid>
+        <Row style={{ paddingBottom: "5px" }}>
+          <Col xs={24} md={4}>
+            Comparison
+          </Col>
+          <Col xs={24} md={12}>
+            <CheckTreePicker
+              defaultExpandAll={false}
+              placeholder="Select comparison"
+              size="sm"
+              onChange={onComparisonNodesChange}
+              uncheckableItemValues={[primaryNode?.site_code, ...disabledItems]}
+              disabledItemValues={[primaryNode?.site_code, ...disabledItems]}
+              data={nodeTypeTreeList}
+              renderTreeNode={(nodeData) => {
+                // console.log("PrimaryNode is ", primaryNode);
+                if (nodeData.properties == undefined) {
+                  // Top level category
+                  return <span>{nodeData.label}</span>;
+                } else if (
+                  nodeData.properties.site_code === primaryNode?.site_code
+                ) {
+                  // It's the same node
+                  return (
+                    <Whisper
+                      placement="top"
+                      trigger="hover"
+                      speaker={selfTooltip}
+                    >
+                      <span>
+                        <InfoOutline /> {nodeData.label}
+                      </span>
+                    </Whisper>
+                  );
+                } else if (!nodeData.properties?.is_enabled) {
+                  // It's disabled
+                  return (
+                    <Whisper
+                      placement="top"
+                      trigger="hover"
+                      speaker={disabledTooltip}
+                    >
+                      <span>
+                        <Block /> {nodeData.label}
+                      </span>
+                    </Whisper>
+                  );
+                } else {
+                  return <span>{nodeData.label}</span>;
+                }
+              }}
+              style={{ width: "70%" }}
+            />{" "}
+          </Col>
+        </Row>
+        <Row style={{ paddingBottom: "5px" }}>
+          <Col xs={24} md={4}>
+            Date
+          </Col>
           <DateSelector dateRange={dateRange} onChange={onDateChange} />
-        </FlexboxGrid.Item>
-      </FlexboxGrid>
-
-      <FlexboxGrid align="middle">
-        <FlexboxGrid.Item colspan={3}>Frequency</FlexboxGrid.Item>
-        <FlexboxGrid.Item colspan={12}>
-          <RadioGroup
-            onChange={onFrequencyChange}
-            name="frequency"
-            inline
-            appearance="picker"
-            defaultValue={frequency}
-            style={styles.radioGroup}
-          >
-            <Radio style={styles.radio} value="hour">
-              Hourly
-            </Radio>
-            <Radio style={styles.radio} value="day">
-              Daily
-            </Radio>
-          </RadioGroup>
-        </FlexboxGrid.Item>
-      </FlexboxGrid>
-
-      <Divider />
-      <FlexboxGrid>
-        <FlexboxGrid.Item colspan={12}>
-          {" "}
-          <ComparisonGraph
-            primaryNode={primaryNode}
-            comparisonNodes={comparisonNodes}
-            series="pm25"
-            dateRange={dateRange}
-            frequency={frequency}
-          />
-        </FlexboxGrid.Item>
-        <FlexboxGrid.Item colspan={12}>
-          <ComparisonGraph
-            primaryNode={primaryNode}
-            comparisonNodes={comparisonNodes}
-            series="no2"
-            dateRange={dateRange}
-            frequency={frequency}
-          />
-        </FlexboxGrid.Item>
-      </FlexboxGrid>
+          <Col xs={24} md={12}></Col>
+        </Row>
+        <Row style={{ paddingBottom: "5px" }}>
+          <Col xs={24} md={4}>
+            Frequency
+          </Col>
+          <Col xs={24} md={12}>
+            <RadioGroup
+              onChange={onFrequencyChange}
+              name="frequency"
+              inline
+              appearance="picker"
+              defaultValue={frequency}
+              style={styles.radioGroup}
+            >
+              <Radio style={styles.radio} value="hour">
+                Hourly
+              </Radio>
+              <Radio style={styles.radio} value="day">
+                Daily
+              </Radio>
+            </RadioGroup>
+          </Col>
+        </Row>
+        <Row style={{ paddingBottom: "5px" }}>
+          <Col xs={24} md={12}>
+            <ComparisonGraph
+              primaryNode={primaryNode}
+              comparisonNodes={comparisonNodes}
+              series="pm25"
+              dateRange={dateRange}
+              frequency={frequency}
+            />
+          </Col>
+          <Col xs={24} md={12}>
+            <ComparisonGraph
+              primaryNode={primaryNode}
+              comparisonNodes={comparisonNodes}
+              series="no2"
+              dateRange={dateRange}
+              frequency={frequency}
+            />
+          </Col>
+        </Row>
+      </Grid>
     </div>
   );
 }

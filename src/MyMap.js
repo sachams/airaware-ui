@@ -243,9 +243,6 @@ function MyMap({ siteData, ltnData, boroughData }) {
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
-        /* The GeocoderControl doesn't respond to updates to the localGeocoder -
-        it only uses the first one it was created with. So we must only create
-        the control when the forwardGeocoderFunc has been set */
         {forwardGeocoderFunc && (
           <GeocoderControl
             mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
