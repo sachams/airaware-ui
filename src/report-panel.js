@@ -40,13 +40,15 @@ function ReportPanel({ primaryNode }) {
     <div className="report-panel">
       <Grid fluid>
         <Row gutter={16} className="report-row">
-          <Col xs={4}>Date range</Col>
-          <Col xs={12}>
+          <Col xs={24} md={4}>
+            Date range
+          </Col>
+          <Col xs={24} md={12}>
             <DateSelector dateRange={dateRange} onChange={onDateChange} />
           </Col>
         </Row>
         <Row className="report-row">
-          <Col xs={12}>
+          <Col xs={24} md={12}>
             {" "}
             <BreachCalendar
               primaryNode={primaryNode}
@@ -55,7 +57,7 @@ function ReportPanel({ primaryNode }) {
               threshold={15}
             />
           </Col>
-          <Col xs={12}>
+          <Col xs={24} md={12}>
             <BreachCalendar
               primaryNode={primaryNode}
               series="no2"
@@ -65,7 +67,7 @@ function ReportPanel({ primaryNode }) {
           </Col>
         </Row>
         <Row className="report-row">
-          <Col xs={12}>
+          <Col xs={24} md={12}>
             {" "}
             <HourOfDayGraph
               primaryNode={primaryNode}
@@ -74,7 +76,7 @@ function ReportPanel({ primaryNode }) {
               threshold={15}
             />
           </Col>
-          <Col xs={12}>
+          <Col xs={24} md={12}>
             <HourOfDayGraph
               primaryNode={primaryNode}
               series="no2"
@@ -84,7 +86,7 @@ function ReportPanel({ primaryNode }) {
           </Col>
         </Row>
         <Row className="report-row">
-          <Col xs={12}>
+          <Col xs={24} md={12}>
             {" "}
             <Heatmap
               primaryNode={primaryNode}
@@ -93,7 +95,7 @@ function ReportPanel({ primaryNode }) {
               threshold={15}
             />
           </Col>
-          <Col xs={12}>
+          <Col xs={24} md={12}>
             <Heatmap
               primaryNode={primaryNode}
               series="no2"
