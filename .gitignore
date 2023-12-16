@@ -19,6 +19,10 @@
 .env.test.local
 .env.production.local
 
+# TODO: decide if these should be committed to github or not
+.env.development
+.env.production
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
