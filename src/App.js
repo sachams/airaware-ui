@@ -1,10 +1,10 @@
 import "./App.css";
-import MyMap from "./MyMap";
+import DataMap from "./datamap";
 
 function App() {
   return (
     <>
-      <MyMap />
+      <DataMap />
     </>
   );
 }

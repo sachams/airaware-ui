@@ -71,7 +71,7 @@ function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
   return featureCollection;
 }
 
-function MyMap() {
+function DataMap() {
   const mapRef = useRef();
   const [startDate, setStartDate] = useState(
     DateTime.now().minus({ months: 1 })
@@ -438,4 +438,4 @@ function MyMap() {
   );
 }
 
-export default MyMap;
+export default DataMap;
