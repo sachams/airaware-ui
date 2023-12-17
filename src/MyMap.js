@@ -29,9 +29,103 @@ import NodePopup from "./node-popup";
 import SidePanel from "./side-panel";
 import AboutDrawer from "./about-drawer";
 import { Loader } from "rsuite";
+import { DateTime } from "luxon";
+import axios from "axios";
 
-function MyMap({ siteData, ltnData, boroughData }) {
+const serverUrl = process.env.REACT_APP_SERVER_URL;
+
+const nullGeoJson = {
+  type: "FeatureCollection",
+  features: [],
+};
+
+function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
+  // Generate a map of pm25 averages from a list of dicts
+  const siteAveragePM25Map = siteAveragePM25.reduce(
+    (map, obj) => ((map[obj.site_code] = obj.value), map),
+    {}
+  );
+
+  // Generate a map of no2 averages from a list of dicts
+  const siteAverageNO2MMap = siteAverageNO2.reduce(
+    (map, obj) => ((map[obj.site_code] = obj.value), map),
+    {}
+  );
+
+  // Generate the site GeoJSON, spreading the node data as a property
+  const features = sites.map((site) => ({
+    type: "Feature",
+    properties: {
+      ...site,
+      enabled_status: site.is_enabled ? "Enabled" : "Disabled",
+      AveragePM25: siteAveragePM25Map[site.site_code],
+      AverageNO2: siteAverageNO2MMap[site.site_code],
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [site.longitude, site.latitude],
+    },
+  }));
+  const featureCollection = { type: "FeatureCollection", features: features };
+
+  return featureCollection;
+}
+
+function MyMap() {
   const mapRef = useRef();
+  const [startDate, setStartDate] = useState(
+    DateTime.now().minus({ months: 1 })
+  );
+  const [endDate, setEndDate] = useState(DateTime.now());
+
+  const noop = () => {};
+
+  const [data, setData] = useState({
+    siteData: nullGeoJson,
+    ltnData: nullGeoJson,
+    boroughData: nullGeoJson,
+  });
+
+  // Thanks https://stackoverflow.com/a/44185591
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        console.log("Fetching data from server");
+
+        // Load all the data asynchronously and wait for the result
+        const [sites, siteAveragePM25, siteAverageNO2, ltnData, boroughData] =
+          await Promise.all([
+            axios.get(`${serverUrl}/sites`),
+            axios.get(
+              `${serverUrl}/site_average/pm25/${startDate.toString()}/${endDate.toString()}`
+            ),
+            axios.get(
+              `${serverUrl}/site_average/no2/${startDate.toString()}/${endDate.toString()}`
+            ),
+            axios.get(`${serverUrl}/geometry/ltns`),
+            axios.get(`${serverUrl}/geometry/boroughs`),
+          ]);
+
+        // Generate site geojson, enriched with pm25 and no2 averages
+        const siteData = getSiteGeoJson(
+          sites.data,
+          siteAveragePM25.data,
+          siteAverageNO2.data
+        );
+
+        setData({
+          siteData: siteData,
+          ltnData: ltnData.data,
+          boroughData: boroughData.data,
+        });
+      } catch (error) {
+        console.error("Error fetching site data:", error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const adjustCoordinates = (event, coordinates) => {
     // Ensure that if the map is zoomed out such that multiple
@@ -185,7 +279,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
       var matchingFeatures = [];
 
       // Find matching nodes
-      siteData.features.forEach((feature) => {
+      data.siteData.features.forEach((feature) => {
         // Handle queries with different capitalization
         // than the source data by calling toLowerCase().
         if (
@@ -202,7 +296,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
       });
 
       // Find matching LTNs
-      ltnData.features.forEach((feature) => {
+      data.ltnData.features.forEach((feature) => {
         // Handle queries with different capitalization
         // than the source data by calling toLowerCase().
         if (
@@ -220,10 +314,10 @@ function MyMap({ siteData, ltnData, boroughData }) {
 
     // Only set the forwardGeocoderFunc once we have data, as we can only set this once
     // on the Geocoder component
-    if (siteData.features.length > 0) {
+    if (data.siteData.features.length > 0) {
       setForwardGeocoderFunc(() => forwardGeocoder);
     }
-  }, [siteData, ltnData]);
+  }, [data.siteData, data.ltnData]);
 
   return (
     <>
@@ -259,7 +353,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
         /* Only create the NavigationControl once forwardGeocoderFunc has been
         set, otherwise the order on the page will be wrong */
         {forwardGeocoderFunc && <NavigationControl position="bottom-right" />}
-        <Source type="geojson" data={ltnData} generateId={true}>
+        <Source type="geojson" data={data.ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
             layout={{
@@ -273,7 +367,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
             }}
           />
         </Source>
-        <Source type="geojson" data={boroughData} generateId={true}>
+        <Source type="geojson" data={data.boroughData} generateId={true}>
           <Layer
             {...boroughFillDataLayer}
             layout={{
@@ -302,7 +396,12 @@ function MyMap({ siteData, ltnData, boroughData }) {
             properties={hoverInfo.properties}
           />
         )}
-        <Source id="nodes" type="geojson" data={siteData} generateId={true}>
+        <Source
+          id="nodes"
+          type="geojson"
+          data={data.siteData}
+          generateId={true}
+        >
           <Layer
             {...pm25Layer}
             layout={{ visibility: series === "pm25" ? "visible" : "none" }}
@@ -320,7 +419,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
           featureValue={features}
         />
         <SidePanel
-          siteData={siteData}
+          siteData={data.siteData}
           onClose={onSidePanelClose}
           selectedNode={selectedFeature?.properties}
         />
@@ -334,7 +433,7 @@ function MyMap({ siteData, ltnData, boroughData }) {
           onClick={() => setAboutDrawerOpen(true)}
         />
       </Map>
-      {siteData.features.length == 0 && <Loader size="lg" center />}
+      {data.siteData.features.length == 0 && <Loader size="lg" center />}
     </>
   );
 }
