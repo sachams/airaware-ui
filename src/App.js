@@ -1,10 +1,13 @@
 import "./App.css";
 import DataMap from "./datamap";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <>
-      <DataMap />
+      <Routes>
+        <Route path="/" element={<DataMap />} />
+      </Routes>
     </>
   );
 }
