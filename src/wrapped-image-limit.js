@@ -8,19 +8,6 @@ function WrappedImageLimit({ description, threshold, value, image }) {
   } than the ${description} of ${threshold}`;
   const colourClass = value > threshold ? "red-fill" : "green-fill";
 
-  // const getImage = (imageName) => {
-  //   switch (imageName) {
-  //     case "snowman":
-  //       return snowman;
-  //     case "cane":
-  //       return cane;
-  //     default:
-  //       return baubel;
-  //   }
-  // };
-
-  // const image = getImage(imageName);
-
   return (
     <div className="icon-wrapper">
       <img className={`icon-image ${colourClass}`} src={image} />

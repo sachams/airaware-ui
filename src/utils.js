@@ -17,3 +17,34 @@ export const nthNumber = (number) => {
       return "th";
   }
 };
+
+export const thresholds = {
+  pm25: {
+    who: {
+      description: "WHO annual guideline",
+      value: 25,
+    },
+    mayor: {
+      description: "Mayor of London's limit",
+      value: 35,
+    },
+    uk: {
+      description: "UK annual limit",
+      value: 45,
+    },
+  },
+  no2: {
+    who: {
+      description: "WHO annual guideline",
+      value: 22,
+    },
+    mayor: {
+      description: "Mayor of London's limit",
+      value: 32,
+    },
+    uk: {
+      description: "UK annual limit",
+      value: 42,
+    },
+  },
+};

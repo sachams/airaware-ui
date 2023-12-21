@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./wrapped-ranking.css";
-import { getSeriesName, nthNumber } from "./utils";
+import { getSeriesName, nthNumber, thresholds } from "./utils";
 
 import WrappedImageLimit from "./wrapped-image-limit";
 
@@ -9,37 +9,6 @@ import cane from "./img/cane-32.svg";
 import baubel from "./img/baubel-07.svg";
 
 function WrappedRanking({ data, year, series }) {
-  const thresholds = {
-    pm25: {
-      who: {
-        description: "WHO annual guideline",
-        value: 25,
-      },
-      mayor: {
-        description: "Mayor of London's limit",
-        value: 35,
-      },
-      uk: {
-        description: "UK annual limit",
-        value: 45,
-      },
-    },
-    no2: {
-      who: {
-        description: "WHO annual guideline",
-        value: 22,
-      },
-      mayor: {
-        description: "Mayor of London's limit",
-        value: 32,
-      },
-      uk: {
-        description: "UK annual limit",
-        value: 42,
-      },
-    },
-  };
-
   return (
     <div id="wrapper">
       {data && (
