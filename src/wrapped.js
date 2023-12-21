@@ -1,28 +1,23 @@
-import React, { useState } from "react";
-import Navbar from "./navbar";
-import ComparePanel from "./compare-panel";
-import HomePanel from "./home-panel";
-import ReportPanel from "./report-panel";
-import NodePanel from "./node-panel";
-import {
-  Drawer,
-  RadioGroup,
-  Radio,
-  ButtonToolbar,
-  Button,
-  Placeholder,
-} from "rsuite";
-
+import React from "react";
+import { Carousel, RadioGroup, Radio, Divider } from "rsuite";
 import "./wrapped.css";
+import PictureBreach from "./picture-breach";
 
-function Wrapped({ siteData, selectedNode, onClose }) {
-  const [activeTab, setActiveTab] = useState("node");
+function Wrapped({ year }) {
+  const dateRange = [new Date(year, 0, 1), new Date(year, 11, 31)];
 
-  const onActiveTabSelect = (activeTab) => {
-    setActiveTab(activeTab);
-  };
-
-  return <Wrapped></Wrapped>;
+  return (
+    <>
+      <div className="bg-image">
+        <PictureBreach
+          siteCode="CLDP0467"
+          series="pm25"
+          dateRange={dateRange}
+          threshold={15}
+        />
+      </div>
+    </>
+  );
 }
 
-export default React.memo(SidePanel);
+export default Wrapped;

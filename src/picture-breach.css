@@ -1,0 +1,54 @@
+.breach-calendar {
+    width: 100%;
+    height: 50%;
+  }
+
+#chart {
+  width: 100%;
+  height: 380px;
+}
+
+#wrapper {
+  width: 370px;
+  /* border: 1px solid white; */
+  background-color: rgba(0,0,0,0.6);
+  border-radius: 10px;
+}
+
+#text-wrapper {
+  /* border: 1px solid white; */
+  margin: 0px 0px 0px 0px;
+  overflow: hidden; /* add this to contain floated children */
+}
+
+#count {
+    font: 50px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    margin: 20px;
+    /* border: 1px solid white; */
+    font-weight: bold;
+    float: left;
+    color: #f8eae0;
+    vertical-align: text-top;
+}
+
+#narrative {
+    font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    /* border: 1px solid white; */
+    margin: 30px 20px 00px 0px;
+    overflow: hidden; /* if you don't want #second to wrap below #first */
+    color: #f8eae0;
+}
+
+#subtitle {
+  font: 10px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  margin: 10px 20px 10px 20px;
+  overflow: hidden; /* if you don't want #second to wrap below #first */
+  color: #f8eae0;
+}
+
+h3 {
+  font: 10px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+    

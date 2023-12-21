@@ -1,0 +1,6 @@
+.bg-image {
+  background-image: url("wrapped.png");
+  /* background-size: "cover"; */
+  width: 1000px;
+  height: 1000px;
+}
