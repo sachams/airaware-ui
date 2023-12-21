@@ -27,3 +27,27 @@ h3 {
 .chart-figure {
   color: white;
 }
+
+.headline {
+  font: 30px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  font-weight: bold;
+  color: #f8eae0;
+  margin: auto;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  display: block;
+  width: 60%;
+  text-align: center;
+}
+
+.narrative {
+  font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  color: #f8eae0;
+  margin: auto;
+  margin-bottom: 20px;
+  display: block;
+  width: 60%;
+  text-align: center;
+}

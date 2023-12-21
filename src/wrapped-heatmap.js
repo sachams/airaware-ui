@@ -1,29 +1,13 @@
-import axios from "axios";
 import * as React from "react";
 import * as Plot from "@observablehq/plot";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./wrapped-heatmap.css";
-import { Loader } from "rsuite";
-import { format, set } from "date-fns";
 import { getSeriesName } from "./utils";
 
-const serverUrl = process.env.REACT_APP_SERVER_URL;
-
-function WrappedHeatmap({ year, series }) {
+function WrappedHeatmap({ data, series, year }) {
   const containerRef = useRef();
-  const [data, setData] = useState([]);
 
-  useEffect(() => {
-    let data = [];
-    for (let day = 0; day < 7; day++) {
-      for (let hour = 0; hour < 24; hour++) {
-        data.push({ day, hour, value: Math.random() * 20 });
-      }
-    }
-    setData(data);
-  }, []);
-
-  const getMaxMin = (data) => {
+  const getMinMax = (data) => {
     let max = undefined;
     let min = undefined;
 
@@ -36,15 +20,36 @@ function WrappedHeatmap({ year, series }) {
         min = d;
       }
     });
-    return [max, min];
+    return { min, max };
   };
-  const formatDay = (d) => {
-    return format(d, "ddd");
+
+  const range = getMinMax(data[series]);
+  const formatDay = (day) => {
+    const dayMapping = {
+      0: "Sundays",
+      1: "Mondays",
+      2: "Tuesdays",
+      3: "Wednesdays",
+      4: "Thursdays",
+      5: "Fridays",
+      6: "Saturdays",
+    };
+    return dayMapping[day];
+  };
+
+  const formatTime = (hour) => {
+    if (hour == 0) {
+      return "midnight";
+    } else if (hour == 12) {
+      return "noon";
+    } else if (hour < 12) {
+      return `${hour}am`;
+    } else {
+      return `${hour - 12}pm`;
+    }
   };
 
   useEffect(() => {
-    if (data.length == 0) return;
-
     const plot = Plot.plot({
       className: "chart",
       style: {
@@ -73,7 +78,7 @@ function WrappedHeatmap({ year, series }) {
       },
 
       marks: [
-        Plot.cell(data, {
+        Plot.cell(data[series], {
           x: (d) => d.hour,
           y: (d) => d.day,
           fill: "value",
@@ -88,14 +93,22 @@ function WrappedHeatmap({ year, series }) {
 
   return (
     <div id="wrapper">
-      {data && (
-        <div id="text-wrapper">
-          <p id="narrative">
-            On average in {year}, {getSeriesName(series)} was worst on Tuesdays
-            at 1pma nd the worst was Monday 4am.
-          </p>
-        </div>
-      )}
+      <div id="text-wrapper">
+        <p class="headline">
+          {formatDay(range.max.day)} at {formatTime(range.max.day)}
+        </p>
+        <p class="narrative">
+          Worst {getSeriesName(series)} on average in {year}
+        </p>
+      </div>
+      <div id="text-wrapper">
+        <p class="headline">
+          {formatDay(range.min.day)} at {formatTime(range.min.day)}
+        </p>
+        <p class="narrative">
+          Best {getSeriesName(series)} on average in {year}
+        </p>
+      </div>
       <div className="wrapped-heatmap" ref={containerRef} />
     </div>
   );
