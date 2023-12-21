@@ -8,10 +8,18 @@ import WrappedRanking from "./wrapped-ranking";
 function Wrapped({ year }) {
   const dateRange = [new Date(year, 0, 1), new Date(year, 11, 31)];
 
+  const data = {
+    ranking: {
+      pm25: { rank: 5, value: 10.2 },
+      no2: { rank: 10, value: 35.5 },
+    },
+  };
+
   return (
     <>
       <div className="bg-image">
-        <WrappedRanking siteCode="NODE_10" series="no2" year={2023} />
+        <WrappedRanking data={data.ranking} series="pm25" year={2023} />
+        <WrappedRanking data={data.ranking} series="no2" year={2023} />
       </div>
     </>
   );

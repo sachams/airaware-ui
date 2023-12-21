@@ -1,7 +1,4 @@
-import axios from "axios";
 import * as React from "react";
-import * as Plot from "@observablehq/plot";
-import { useEffect, useRef, useState } from "react";
 import "./wrapped-ranking.css";
 import { getSeriesName, nthNumber } from "./utils";
 
@@ -11,18 +8,7 @@ import snowman from "./img/snowman-66.svg";
 import cane from "./img/cane-32.svg";
 import baubel from "./img/baubel-07.svg";
 
-function WrappedRanking({ year, series }) {
-  const containerRef = useRef();
-  const [data, setData] = useState(undefined);
-
-  useEffect(() => {
-    const data = {
-      pm25: { rank: 5, value: 10.2 },
-      no2: { rank: 10, value: 35.5 },
-    };
-    setData(data);
-  }, []);
-
+function WrappedRanking({ data, year, series }) {
   const thresholds = {
     pm25: {
       who: {
