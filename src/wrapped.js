@@ -3,6 +3,7 @@ import { Carousel, RadioGroup, Radio, Divider } from "rsuite";
 import "./wrapped.css";
 import PictureBreach from "./picture-breach";
 import WrappedHeatmap from "./wrapped-heatmap";
+import WrappedRanking from "./wrapped-ranking";
 
 function Wrapped({ year }) {
   const dateRange = [new Date(year, 0, 1), new Date(year, 11, 31)];
@@ -10,7 +11,7 @@ function Wrapped({ year }) {
   return (
     <>
       <div className="bg-image">
-        <WrappedHeatmap siteCode="CLDP0467" series="no2" year={2023} />
+        <WrappedRanking siteCode="NODE_10" series="no2" year={2023} />
       </div>
     </>
   );

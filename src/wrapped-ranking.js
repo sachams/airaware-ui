@@ -2,103 +2,100 @@ import axios from "axios";
 import * as React from "react";
 import * as Plot from "@observablehq/plot";
 import { useEffect, useRef, useState } from "react";
-import "./wrapped-heatmap.css";
-import { Loader } from "rsuite";
-import { format, set } from "date-fns";
-import { getSeriesName } from "./utils";
+import "./wrapped-ranking.css";
+import { getSeriesName, nthNumber } from "./utils";
 
-const serverUrl = process.env.REACT_APP_SERVER_URL;
+import WrappedImageLimit from "./wrapped-image-limit";
 
-function WrappedHeatmap({ year, series }) {
+import snowman from "./snowman-66.svg";
+import cane from "./cane-32.svg";
+import baubel from "./baubel-07.svg";
+
+function WrappedRanking({ year, series }) {
   const containerRef = useRef();
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(undefined);
 
   useEffect(() => {
-    let data = [];
-    for (let day = 0; day < 7; day++) {
-      for (let hour = 0; hour < 24; hour++) {
-        data.push({ day, hour, value: Math.random() * 20 });
-      }
-    }
+    const data = {
+      pm25: { rank: 5, value: 10.2 },
+      no2: { rank: 10, value: 35.5 },
+    };
     setData(data);
   }, []);
 
-  const getMaxMin = (data) => {
-    let max = undefined;
-    let min = undefined;
-
-    data.forEach((d) => {
-      if (max == undefined || d.value > max.value) {
-        max = d;
-      }
-
-      if (min == undefined || d.value < min.value) {
-        min = d;
-      }
-    });
-    return [max, min];
+  const thresholds = {
+    pm25: {
+      who: {
+        description: "WHO annual guideline",
+        value: 25,
+      },
+      mayor: {
+        description: "Mayor of London's limit",
+        value: 35,
+      },
+      uk: {
+        description: "UK annual limit",
+        value: 45,
+      },
+    },
+    no2: {
+      who: {
+        description: "WHO annual guideline",
+        value: 22,
+      },
+      mayor: {
+        description: "Mayor of London's limit",
+        value: 32,
+      },
+      uk: {
+        description: "UK annual limit",
+        value: 42,
+      },
+    },
   };
-  const formatDay = (d) => {
-    return format(d, "ddd");
-  };
-
-  useEffect(() => {
-    if (data.length == 0) return;
-
-    const plot = Plot.plot({
-      className: "chart",
-      style: {
-        fontSize: 14,
-        backgroundColor: "#00000000",
-      },
-      marginLeft: 60,
-      marginBottom: 40,
-      x: {
-        tickSize: 0,
-        label: "Hour of day",
-      },
-
-      y: {
-        tickFormat: Plot.formatWeekday("en", "short"),
-      },
-
-      color: {
-        type: "linear",
-        className: "legend",
-        legend: true,
-        scheme: "YlGnBu",
-        reverse: true,
-        zero: true,
-        label: `${getSeriesName(series)} concentration (ug/m3)`,
-      },
-
-      marks: [
-        Plot.cell(data, {
-          x: (d) => d.hour,
-          y: (d) => d.day,
-          fill: "value",
-          inset: 0.5,
-        }),
-      ],
-    });
-
-    containerRef.current.append(plot);
-    return () => plot.remove();
-  }, [data]);
 
   return (
     <div id="wrapper">
       {data && (
         <div id="text-wrapper">
+          <p id="count">
+            {data[series].rank}
+            <span style={{ fontSize: "20px", verticalAlign: "baseline" }}>
+              {nthNumber(data[series].rank)}
+            </span>
+          </p>
           <p id="narrative">
-            On average in {year}, {getSeriesName(series)} was worst on Tuesdays
-            at 1pma nd the worst was Monday 4am.
+            Worst average {getSeriesName(series)} levels in London in {year},
+            with an average of {data[series].value} ug/m3
           </p>
         </div>
       )}
-      <div className="wrapped-heatmap" ref={containerRef} />
+      {data && (
+        <WrappedImageLimit
+          description={thresholds[series].who.description}
+          threshold={thresholds[series].who.value}
+          value={data[series].value}
+          image={snowman}
+        />
+      )}
+      {data && (
+        <WrappedImageLimit
+          description={thresholds[series].mayor.description}
+          threshold={thresholds[series].mayor.value}
+          value={data[series].value}
+          image={cane}
+        />
+      )}
+      {data && (
+        <WrappedImageLimit
+          description={thresholds[series].uk.description}
+          threshold={thresholds[series].uk.value}
+          value={data[series].value}
+          image={baubel}
+        />
+      )}
     </div>
   );
 }
 
-export default React.memo(WrappedHeatmap);
+export default React.memo(WrappedRanking);

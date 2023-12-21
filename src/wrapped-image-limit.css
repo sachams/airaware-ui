@@ -1,0 +1,25 @@
+.icon-wrapper {
+  margin-bottom: 10px;
+}
+.icon-narrative {
+  color: white;
+  margin: auto;
+  display: block;
+  width: 60%;
+  text-align: center;
+}
+
+.icon-image {
+  height: 100px;
+  width: 100px;
+  margin: auto;
+  display: block;
+}
+
+.red-fill {
+  filter: invert(18%) sepia(100%) saturate(7423%) hue-rotate(2deg) brightness(120%) contrast(117%);
+}
+
+.green-fill {
+  filter: invert(56%) sepia(49%) saturate(3452%) hue-rotate(82deg) brightness(120%) contrast(122%);
+}
