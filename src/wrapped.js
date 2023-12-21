@@ -11,7 +11,7 @@ function Wrapped({ year }) {
       <div className="bg-image">
         <PictureBreach
           siteCode="CLDP0467"
-          series="pm25"
+          series="no2"
           dateRange={dateRange}
           threshold={15}
         />

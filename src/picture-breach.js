@@ -85,7 +85,7 @@ function PictureBreach(props) {
       .data(layoutFunc(colourArray))
       .enter()
       .append("use")
-      .attr("xlink:href", "#stockingIcon")
+      .attr("xlink:href", series === "pm25" ? "#stockingIcon" : "#treeIcon")
       .attr("x", (d) => arrayScale(d.position.x))
       .attr("y", (d) => arrayScale(d.position.y))
       .attr("fill", (d) => d.data);
