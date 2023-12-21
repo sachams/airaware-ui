@@ -1,10 +1,11 @@
 import * as React from "react";
 import "./wrapped-image-limit.css";
+import Units from "./units";
 
 function WrappedImageLimit({ description, threshold, value, image }) {
   const copy = `${
     value > threshold ? "Higher" : "Lower"
-  } than the ${description} of ${value} ug/m3`;
+  } than the ${description} of ${threshold}`;
   const colourClass = value > threshold ? "red-fill" : "green-fill";
 
   // const getImage = (imageName) => {
@@ -23,7 +24,10 @@ function WrappedImageLimit({ description, threshold, value, image }) {
   return (
     <div className="icon-wrapper">
       <img className={`icon-image ${colourClass}`} src={image} />
-      <p className="icon-narrative">{copy}</p>
+      <p className="icon-narrative">
+        {copy}
+        <Units />
+      </p>
     </div>
   );
 }
