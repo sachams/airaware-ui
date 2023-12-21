@@ -7,9 +7,9 @@ import { getSeriesName, nthNumber } from "./utils";
 
 import WrappedImageLimit from "./wrapped-image-limit";
 
-import snowman from "./snowman-66.svg";
-import cane from "./cane-32.svg";
-import baubel from "./baubel-07.svg";
+import snowman from "./img/snowman-66.svg";
+import cane from "./img/cane-32.svg";
+import baubel from "./img/baubel-07.svg";
 
 function WrappedRanking({ year, series }) {
   const containerRef = useRef();
