@@ -1,8 +1,10 @@
 import * as React from "react";
 import * as Plot from "@observablehq/plot";
 import { useEffect, useRef } from "react";
-import "./wrapped-heatmap.css";
 import { getSeriesName } from "./utils";
+import WrappedPanel from "./wrapped-panel";
+
+import "./wrapped-heatmap.css";
 
 function WrappedHeatmap({ data, series, year }) {
   const containerRef = useRef();
@@ -92,7 +94,7 @@ function WrappedHeatmap({ data, series, year }) {
   }, [data]);
 
   return (
-    <div id="wrapper">
+    <WrappedPanel>
       <div id="text-wrapper">
         <p class="headline">
           {formatDay(range.max.day)} at {formatTime(range.max.day)}
@@ -110,7 +112,7 @@ function WrappedHeatmap({ data, series, year }) {
         </p>
       </div>
       <div className="wrapped-heatmap" ref={containerRef} />
-    </div>
+    </WrappedPanel>
   );
 }
 

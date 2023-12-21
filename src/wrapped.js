@@ -1,5 +1,6 @@
 import React from "react";
-import { Carousel, RadioGroup, Radio, Divider } from "rsuite";
+import { useEffect } from "react";
+import { Grid, Row, Col } from "rsuite";
 import "./wrapped.css";
 import WrappedBreach from "./wrapped-breach";
 import WrappedHeatmap from "./wrapped-heatmap";
@@ -36,16 +37,43 @@ function Wrapped({ year }) {
     }
   }
 
+  useEffect(() => {
+    document.body.classList.add("bg-image");
+
+    return () => {
+      document.body.classList.remove("bg-image");
+    };
+  });
+
   return (
     <>
-      <div className="bg-image">
-        <WrappedBreach data={data.breach} series="pm25" year={year} />
-        <WrappedBreach data={data.breach} series="no2" year={year} />
-        <WrappedHeatmap data={data.heatmap} series="pm25" year={year} />
-        <WrappedHeatmap data={data.heatmap} series="no2" year={year} />
-        <WrappedRanking data={data.ranking} series="pm25" year={year} />
-        <WrappedRanking data={data.ranking} series="no2" year={year} />
-      </div>
+      <Grid fluid>
+        <Row>
+          <Col xs={24} md={12}>
+            <WrappedBreach data={data.breach} series="pm25" year={year} />
+          </Col>
+          <Col xs={24} md={12}>
+            <WrappedBreach data={data.breach} series="no2" year={year} />
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={24} md={12}>
+            <WrappedHeatmap data={data.heatmap} series="pm25" year={year} />
+          </Col>
+          <Col xs={24} md={12}>
+            <WrappedHeatmap data={data.heatmap} series="no2" year={year} />
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={24} md={12}>
+            <WrappedRanking data={data.ranking} series="pm25" year={year} />
+          </Col>
+          <Col xs={24} md={12}>
+            <WrappedRanking data={data.ranking} series="no2" year={year} />
+          </Col>
+        </Row>
+      </Grid>
     </>
   );
 }

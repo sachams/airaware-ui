@@ -1,6 +1,13 @@
 .bg-image {
   background-image: url("./img/wrapped.png");
-  /* background-size: "cover"; */
-  width: 1000px;
-  height: 1000px;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+
+.wrapped-grid {
+  margin: auto;
+  /* display: block; */
+  width: 90%;
+  /* text-align: center; */
 }

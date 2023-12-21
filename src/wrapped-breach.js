@@ -1,6 +1,5 @@
-import axios from "axios";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./wrapped-breach.css";
 import { getSeriesName } from "./utils";
 import * as d3 from "d3";
@@ -8,7 +7,7 @@ import { layout } from "d3-iconarray";
 import { appendStockingIcon, appendTreeIcon } from "./svg-utils";
 import Units from "./units";
 import { thresholds } from "./utils";
-const serverUrl = process.env.REACT_APP_SERVER_URL;
+import WrappedPanel from "./wrapped-panel";
 
 function WrappedBreach({ data, series, year }) {
   const containerRef = useRef();
@@ -54,7 +53,7 @@ function WrappedBreach({ data, series, year }) {
   }, []);
 
   return (
-    <div id="wrapper">
+    <WrappedPanel>
       <div id="text-wrapper">
         <p id="count">{data[series].breach}</p>
         <p id="narrative">
@@ -68,7 +67,7 @@ function WrappedBreach({ data, series, year }) {
           <Units />. Grey icons are days with no data.
         </p>
       </div>
-    </div>
+    </WrappedPanel>
   );
 }
 
