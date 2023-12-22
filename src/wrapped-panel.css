@@ -1,8 +1,11 @@
 .wrapped-panel {
   width: 370px;
+  height: 550px;
   /* border: 1px solid white; */
   background-color: rgba(0,0,0,0.7);
   border-radius: 10px;
-  margin: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
 }
   
