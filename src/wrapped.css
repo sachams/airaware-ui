@@ -1,9 +1,3 @@
-.bg-image {
-  background-image: url("./img/wrapped.png");
-  background-size: cover;
-  background-attachment: fixed;
-}
-
 
 .wrapped-grid {
   margin: auto;

@@ -1,79 +1,57 @@
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Grid, Row, Col } from "rsuite";
 import "./wrapped.css";
-import WrappedBreach from "./wrapped-breach";
-import WrappedHeatmap from "./wrapped-heatmap";
-import WrappedRanking from "./wrapped-ranking";
+import WrappedMap from "./wrapped-map";
+import WrappedDrawer from "./wrapped-drawer";
+import wrappedData from "./wrapped-data.json";
 
 function Wrapped({ year }) {
-  const data = {
-    heatmap: {
-      pm25: [],
-      no2: [],
-    },
-    breach: {
-      pm25: {
-        ok: 45,
-        breach: 315,
-        no_data: 5,
-      },
-      no2: {
-        ok: 40,
-        breach: 295,
-        no_data: 30,
-      },
-    },
-    ranking: {
-      pm25: { rank: 5, value: 10.2 },
-      no2: { rank: 10, value: 35.5 },
-    },
-  };
-
-  for (let day = 0; day < 7; day++) {
-    for (let hour = 0; hour < 24; hour++) {
-      data.heatmap.pm25.push({ day, hour, value: Math.random() * 20 });
-      data.heatmap.no2.push({ day, hour, value: Math.random() * 20 });
-    }
-  }
+  const [data, setData] = useState(undefined);
+  const [selectedNode, setSelectedNode] = useState(undefined);
 
   useEffect(() => {
-    document.body.classList.add("bg-image");
+    for (let day = 0; day < 7; day++) {
+      for (let hour = 0; hour < 24; hour++) {
+        wrappedData[0].heatmap.pm25.push({
+          day,
+          hour,
+          value: Math.random() * 20,
+        });
+        wrappedData[0].heatmap.no2.push({
+          day,
+          hour,
+          value: Math.random() * 20,
+        });
+      }
+    }
+    setData(wrappedData);
+  }, []);
 
-    return () => {
-      document.body.classList.remove("bg-image");
-    };
-  });
+  // const postcode = "SW2 1AW";
+  // const distance = 5;
+
+  const onSelect = (selectedNode) => {
+    console.log("onSelect ", selectedNode.properties);
+    const node = data.find(
+      (node) => node.details.site_code === selectedNode.properties.site_code
+    );
+    console.log("onSelect found ", node);
+    setSelectedNode(node);
+  };
+
+  const onClose = () => {
+    setSelectedNode(undefined);
+  };
 
   return (
     <>
-      <Grid fluid>
-        <Row>
-          <Col xs={24} md={12}>
-            <WrappedBreach data={data.breach} series="pm25" year={year} />
-          </Col>
-          <Col xs={24} md={12}>
-            <WrappedBreach data={data.breach} series="no2" year={year} />
-          </Col>
-        </Row>
-
-        <Row>
-          <Col xs={24} md={12}>
-            <WrappedHeatmap data={data.heatmap} series="pm25" year={year} />
-          </Col>
-          <Col xs={24} md={12}>
-            <WrappedHeatmap data={data.heatmap} series="no2" year={year} />
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={24} md={12}>
-            <WrappedRanking data={data.ranking} series="pm25" year={year} />
-          </Col>
-          <Col xs={24} md={12}>
-            <WrappedRanking data={data.ranking} series="no2" year={year} />
-          </Col>
-        </Row>
-      </Grid>
+      {data && <WrappedMap onSelect={onSelect} data={data}></WrappedMap>}
+      <WrappedDrawer
+        selectedNode={selectedNode}
+        year={year}
+        onClose={onClose}
+      ></WrappedDrawer>
     </>
   );
 }

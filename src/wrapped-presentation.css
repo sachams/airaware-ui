@@ -1,0 +1,5 @@
+.bg-image-wrapped {
+  background-image: url("./img/wrapped.png");
+  background-size: cover;
+  background-attachment: fixed;
+}
