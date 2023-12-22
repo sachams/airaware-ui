@@ -28,7 +28,7 @@ function WrappedBreach({ data, series, year }) {
     const svgElement = d3.select(containerRef.current);
     const margin = { top: 0, left: 20, bottom: 0, right: 20 }; //note that objects need to be wrapped in () so they're evaluated
     const gridWidth = 18;
-    const width = 400;
+    const width = 315;
     const height = 800;
     const arrayScale = d3
       .scaleLinear()

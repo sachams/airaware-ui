@@ -12,6 +12,7 @@ function WrappedDrawer({ selectedNode, year, onClose }) {
   const styles = {
     container: (isMobile) => ({
       backgroundSize: "cover",
+      padding: "30px",
       backgroundImage: `url(${isMobile ? MobileImage : DesktopImage})`,
     }),
   };

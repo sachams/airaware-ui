@@ -1,6 +1,7 @@
+const scale = 0.15;
+
 export const appendStockingIcon = (svg, name) => {
   let icon = svg.append("defs").append("g").attr("id", name);
-  const scale = 0.2;
   icon
     .append("path")
     .attr(
@@ -20,7 +21,6 @@ export const appendStockingIcon = (svg, name) => {
 
 export const appendTreeIcon = (svg, name) => {
   let icon = svg.append("defs").append("g").attr("id", name);
-  const scale = 0.2;
   icon
     .append("polygon")
     .attr(
