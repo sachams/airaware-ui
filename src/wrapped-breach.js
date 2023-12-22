@@ -54,19 +54,17 @@ function WrappedBreach({ data, series, year }) {
 
   return (
     <WrappedPanel>
-      <div id="text-wrapper">
-        <p id="count">{data[series].breach}</p>
-        <p id="narrative">
+      <div className="wrapped-panel-header">
+        <p className="wrapped-panel-number">{data[series].breach}</p>
+        <p className="wrapped-panel-title">
           Breaches of WHO guidelines for {getSeriesName(series)} in {year}.
         </p>
       </div>
       <svg id="chart" ref={containerRef} />
-      <div id="text-wrapper">
-        <p id="subtitle">
-          The WHO daily guideline limit is {thresholds[series]["who"].value}
-          <Units />. Grey icons are days with no data.
-        </p>
-      </div>
+      <p className="wrapped-panel-footer">
+        The WHO daily guideline limit is {thresholds[series]["who"].value}
+        <Units />. Grey icons are days with no data.
+      </p>
     </WrappedPanel>
   );
 }

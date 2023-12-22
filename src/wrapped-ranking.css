@@ -28,3 +28,12 @@ h3 {
   color: white;
 }
 
+
+.wrapped-ranking.narrative {
+  font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  margin: 30px 30px 10px 30px;
+  overflow: hidden; /* if you don't want #second to wrap below #first */
+  color: #f8eae0;
+  text-align: justify;
+}

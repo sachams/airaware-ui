@@ -28,7 +28,7 @@ h3 {
   color: white;
 }
 
-.headline {
+.wrapped-heatmap-headline {
   font: 30px "Helvetica Neue", Arial, Helvetica, sans-serif;
   /* border: 1px solid white; */
   font-weight: bold;
@@ -41,7 +41,7 @@ h3 {
   text-align: center;
 }
 
-.narrative {
+.wrapped-heatmap-narrative {
   font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
   /* border: 1px solid white; */
   color: #f8eae0;
@@ -50,4 +50,8 @@ h3 {
   display: block;
   width: 60%;
   text-align: center;
+}
+
+.wrapped-heatmap-stats {
+  padding-top: 10px;
 }

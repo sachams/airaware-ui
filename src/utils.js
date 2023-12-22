@@ -22,29 +22,25 @@ export const thresholds = {
   pm25: {
     who: {
       description: "WHO annual guideline",
-      value: 25,
-    },
-    mayor: {
-      description: "Mayor of London's limit",
-      value: 35,
+      link: "https://www.c40knowledgehub.org/s/article/WHO-Air-Quality-Guidelines?language=en_US",
+      value: 5,
     },
     uk: {
       description: "UK annual limit",
-      value: 45,
+      link: "https://www.gov.uk/government/statistics/air-quality-statistics/concentrations-of-particulate-matter-pm10-and-pm25",
+      value: 20,
     },
   },
   no2: {
     who: {
       description: "WHO annual guideline",
-      value: 22,
-    },
-    mayor: {
-      description: "Mayor of London's limit",
-      value: 32,
+      link: "https://www.c40knowledgehub.org/s/article/WHO-Air-Quality-Guidelines?language=en_US",
+      value: 10,
     },
     uk: {
       description: "UK annual limit",
-      value: 42,
+      link: "https://www.gov.uk/government/statistics/air-quality-statistics/ntrogen-dioxide",
+      value: 40,
     },
   },
 };

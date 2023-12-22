@@ -9,3 +9,34 @@
   margin-bottom: 30px;
 }
   
+.wrapped-panel-header {
+  /* border: 1px solid white; */
+  margin: 0px 0px 0px 0px;
+  overflow: hidden; /* add this to contain floated children */
+}
+
+.wrapped-panel-number {
+  font: 50px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin: 20px;
+  /* border: 1px solid white; */
+  font-weight: bold;
+  float: left;
+  color: #f8eae0;
+  vertical-align: text-top;
+}
+
+.wrapped-panel-title {
+  font: 16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  margin: 30px 20px 00px 0px;
+  overflow: hidden; /* if you don't want #second to wrap below #first */
+  color: #f8eae0;
+}
+
+.wrapped-panel-footer {
+  font: 10px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  margin: 10px 20px 10px 20px;
+  overflow: hidden; /* if you don't want #second to wrap below #first */
+  color: #f8eae0;
+}

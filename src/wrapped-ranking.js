@@ -1,6 +1,8 @@
 import * as React from "react";
 import "./wrapped-ranking.css";
+import "./wrapped-panel.css";
 import { getSeriesName, nthNumber, thresholds } from "./utils";
+import Units from "./units";
 
 import WrappedImageLimit from "./wrapped-image-limit";
 import WrappedPanel from "./wrapped-panel";
@@ -12,16 +14,16 @@ import baubel from "./img/baubel-07.svg";
 function WrappedRanking({ data, year, series }) {
   return (
     <WrappedPanel>
-      <div id="text-wrapper">
-        <p id="count">
+      <div className="wrapped-panel-header">
+        <p className="wrapped-panel-number">
           {data[series].rank}
           <span style={{ fontSize: "20px", verticalAlign: "baseline" }}>
             {nthNumber(data[series].rank)}
           </span>
         </p>
-        <p id="narrative">
-          Worst average {getSeriesName(series)} levels in London in {year}, with
-          an average of {data[series].value} ug/m3
+        <p className="wrapped-panel-title">
+          Worst {getSeriesName(series)} levels - average of {data[series].value}
+          <Units />
         </p>
       </div>
       <WrappedImageLimit
@@ -31,17 +33,15 @@ function WrappedRanking({ data, year, series }) {
         image={snowman}
       />
       <WrappedImageLimit
-        description={thresholds[series].mayor.description}
-        threshold={thresholds[series].mayor.value}
-        value={data[series].value}
-        image={cane}
-      />
-      <WrappedImageLimit
         description={thresholds[series].uk.description}
         threshold={thresholds[series].uk.value}
         value={data[series].value}
         image={baubel}
       />
+      <div style={{ height: "60px" }} />
+      <p className="wrapped-panel-footer">
+        Average {getSeriesName(series)} levels in London in {year}
+      </p>
     </WrappedPanel>
   );
 }
