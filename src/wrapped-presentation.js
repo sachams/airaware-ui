@@ -40,10 +40,10 @@ function WrappedPresentation({ data, distance, postcode, year }) {
           </Row>
           <Row>
             <Col xs={24} md={12}>
-              <WrappedRanking data={data.ranking} series="pm25" year={year} />
+              <WrappedRanking data={data.rank} series="pm25" year={year} />
             </Col>
             <Col xs={24} md={12}>
-              <WrappedRanking data={data.ranking} series="no2" year={year} />
+              <WrappedRanking data={data.rank} series="no2" year={year} />
             </Col>
           </Row>
         </Grid>

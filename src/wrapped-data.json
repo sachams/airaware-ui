@@ -23,7 +23,7 @@
         "no_data": 30
       }
     },
-    "ranking": {
+    "rank": {
       "pm25": { "rank": 5, "value": 10.2 },
       "no2": { "rank": 10, "value": 35.5 }
     }

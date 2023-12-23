@@ -22,7 +22,8 @@ function WrappedRanking({ data, year, series }) {
           </span>
         </p>
         <p className="wrapped-panel-title">
-          Worst {getSeriesName(series)} levels - average of {data[series].value}
+          Best {getSeriesName(series)} levels in London:{" "}
+          {data[series].value.toFixed(2)}
           <Units />
         </p>
       </div>

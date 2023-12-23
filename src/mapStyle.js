@@ -55,7 +55,7 @@ export const wrappedNodesLayer = {
   type: "circle",
   paint: {
     "circle-color": "#ff0000",
-    "circle-radius": 9,
+    "circle-radius": 3,
     "circle-stroke-width": 1,
     "circle-stroke-color": "#ff0000",
     "circle-opacity": 1,

@@ -8,6 +8,10 @@ import "./wrapped-heatmap.css";
 
 function WrappedHeatmap({ data, series, year }) {
   const containerRef = useRef();
+  const reformattedData = {
+    pm25: data?.pm25.map((d) => ({ hour: d[0], day: d[1], value: d[2] })),
+    no2: data?.no2.map((d) => ({ hour: d[0], day: d[1], value: d[2] })),
+  };
 
   const getMinMax = (data) => {
     let max = undefined;
@@ -25,7 +29,7 @@ function WrappedHeatmap({ data, series, year }) {
     return { min, max };
   };
 
-  const range = getMinMax(data[series]);
+  const range = getMinMax(reformattedData[series]);
   const formatDay = (day) => {
     const dayMapping = {
       0: "Sundays",
@@ -80,7 +84,7 @@ function WrappedHeatmap({ data, series, year }) {
       },
 
       marks: [
-        Plot.cell(data[series], {
+        Plot.cell(reformattedData[series], {
           x: (d) => d.hour,
           y: (d) => d.day,
           fill: "value",
