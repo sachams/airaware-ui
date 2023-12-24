@@ -14,12 +14,13 @@
   width: 100px;
   margin: auto;
   display: block;
+  -webkit-filter: drop-shadow(5px 5px 5px #222);
 }
 
 .red-fill {
-  filter: invert(18%) sepia(100%) saturate(7423%) hue-rotate(2deg) brightness(120%) contrast(117%);
+  filter: invert(18%) sepia(100%) saturate(7423%) hue-rotate(2deg) brightness(120%) contrast(117%) drop-shadow(5px 5px 3px );
 }
 
 .green-fill {
-  filter: invert(56%) sepia(49%) saturate(3452%) hue-rotate(82deg) brightness(120%) contrast(122%);
+  filter: invert(56%) sepia(49%) saturate(3452%) hue-rotate(82deg) brightness(120%) contrast(122%) drop-shadow(5px 5px 3px );
 }

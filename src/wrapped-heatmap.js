@@ -100,16 +100,16 @@ function WrappedHeatmap({ data, series, year }) {
   return (
     <WrappedPanel>
       <div className="wrapped-heatmap-stats">
-        <p className="wrapped-heatmap-headline">
-          {formatDay(range.max.day)} at {formatTime(range.max.day)}
+        <p style={{ color: "red" }} className="wrapped-heatmap-headline">
+          {formatDay(range.max.day)} at {formatTime(range.max.hour)}
         </p>
         <p className="wrapped-heatmap-narrative">
           Worst {getSeriesName(series)} on average in {year}
         </p>
       </div>
       <div className="wrapped-heatmap-stats">
-        <p className="wrapped-heatmap-headline">
-          {formatDay(range.min.day)} at {formatTime(range.min.day)}
+        <p style={{ color: "#22ff22" }} className="wrapped-heatmap-headline">
+          {formatDay(range.min.day)} at {formatTime(range.min.hour)}
         </p>
         <p className="wrapped-heatmap-narrative">
           Best {getSeriesName(series)} on average in {year}

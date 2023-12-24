@@ -22,9 +22,9 @@ function WrappedRanking({ data, year, series }) {
           </span>
         </p>
         <p className="wrapped-panel-title">
-          Best {getSeriesName(series)} levels in London:{" "}
+          best {getSeriesName(series)} level in London (
           {data[series].value.toFixed(2)}
-          <Units />
+          <Units /> average)
         </p>
       </div>
       <WrappedImageLimit
@@ -41,7 +41,8 @@ function WrappedRanking({ data, year, series }) {
       />
       <div style={{ height: "60px" }} />
       <p className="wrapped-panel-footer">
-        Average {getSeriesName(series)} levels in London in {year}
+        1st = best air quality, ranked out of 510 nodes in London by average{" "}
+        {getSeriesName(series)} levels in {year}
       </p>
     </WrappedPanel>
   );

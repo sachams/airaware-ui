@@ -4,6 +4,12 @@ export const getSeriesName = (series) => {
   return seriesMap[series];
 };
 
+export const getSeriesDescription = (series) => {
+  const seriesMap = { pm25: "particulate matter", no2: "nitrogen dioxide" };
+
+  return seriesMap[series];
+};
+
 export const nthNumber = (number) => {
   if (number > 3 && number < 21) return "th";
   switch (number % 10) {

@@ -126,24 +126,17 @@ function WrappedMap({ data, onSelect }) {
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
+        <NavigationControl position="bottom-right" />
         <GeocoderControl
           mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
           localGeocoder={forwardGeocoder}
-          position="bottom-right"
+          position="top-right"
           placeholder="Find a node near you"
           proximity={{
             longitude: -0.1245982,
             latitude: 51.50876,
           }}
         />
-        <NavigationControl position="bottom-right" />
-        {hoverInfo && (
-          <WrappedNodePopup
-            longitude={hoverInfo.longitude}
-            latitude={hoverInfo.latitude}
-            details={hoverInfo.details}
-          />
-        )}
         <Source id="nodes" type="geojson" data={siteGeoJson} generateId={true}>
           <Layer {...wrappedNodesLayer} />
         </Source>

@@ -55,10 +55,10 @@ export const wrappedNodesLayer = {
   type: "circle",
   paint: {
     "circle-color": "#ff0000",
-    "circle-radius": 3,
+    "circle-radius": 9,
     "circle-stroke-width": 1,
-    "circle-stroke-color": "#ff0000",
-    "circle-opacity": 1,
+    "circle-stroke-color": "#7f7f7f",
+    "circle-opacity": 0.8,
   },
 };
 

@@ -5,27 +5,13 @@ import {
   Form,
   ButtonToolbar,
   Button,
+  Modal,
   Schema,
 } from "rsuite";
 import { useEffect, useState } from "react";
 import "./wrapped-welcome.css";
 
-const { StringType } = Schema.Types;
-
-function WrappedWelcome({ year, onSubmit }) {
-  const formRef = React.useRef();
-  const [formValue, setFormValue] = React.useState({
-    password: "",
-  });
-  const handleSubmit = () => {
-    // When handling form submission
-    if (!formRef.current.check()) {
-      console.error("Form error");
-      return;
-    }
-    console.log(formValue, "Form data-: ");
-  };
-
+function WrappedWelcome({ onClose }) {
   useEffect(() => {
     document.body.classList.add("bg-image-welcome");
 
@@ -34,49 +20,36 @@ function WrappedWelcome({ year, onSubmit }) {
     };
   });
 
-  const checkPostcode = (postcode) => {
-    if (postcode === "rsuite") {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const model = Schema.Model({
-    postcode: StringType()
-      .addRule((value) => {
-        // Check the entered postcode
-        return checkPostcode(value);
-      }, "Please enter a valid postcode")
-      .isRequired("This field is required"),
-  });
-
   return (
-    <FlexboxGrid justify="center">
-      <FlexboxGrid.Item colspan={12}>
-        <Panel header={<h3>Enter your postcode to get started!</h3>} bordered>
-          <Form
-            ref={formRef}
-            model={model}
-            checkTrigger="blur"
-            onChange={setFormValue}
-            fluid
-            onSubmit={handleSubmit}
-          >
-            <Form.Group>
-              <Form.Control name="postcode" />
-            </Form.Group>
-            <Form.Group>
-              <ButtonToolbar>
-                <Button appearance="primary" type="submit">
-                  Show me Air Aware Wrapped for {year}
-                </Button>
-              </ButtonToolbar>
-            </Form.Group>
-          </Form>
-        </Panel>
-      </FlexboxGrid.Item>
-    </FlexboxGrid>
+    <Modal open={open} onClose={handleClose}>
+      <Modal.Header>
+        <Modal.Title>Air Aware Wrapped</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>
+          A little gift from Air Aware this Christmas! Unwrap your treasure
+          trove of air quality information for where you live.
+        </p>
+        <p>
+          Air pollution is the biggest environmental threat to our health.
+          Tackling it will make us happier and healthier. What a Christmas gift
+          to give.
+        </p>
+        <p>
+          Pass on to all your London friends! The more people who know about air
+          pollution, the more equipped we are to address it!
+        </p>
+        <p>
+          Search for a monitoring station near you then click on it to see your
+          report.
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={handleClose} appearance="primary">
+          Let's go!
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 

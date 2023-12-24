@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useRef } from "react";
 import "./wrapped-breach.css";
-import { getSeriesName } from "./utils";
+import { getSeriesName, getSeriesDescription } from "./utils";
 import * as d3 from "d3";
 import { layout } from "d3-iconarray";
 import { appendStockingIcon, appendTreeIcon } from "./svg-utils";
@@ -57,12 +57,14 @@ function WrappedBreach({ data, series, year }) {
       <div className="wrapped-panel-header">
         <p className="wrapped-panel-number">{data[series].breach}</p>
         <p className="wrapped-panel-title">
-          Breaches of WHO guidelines for {getSeriesName(series)} in {year}.
+          Daily breaches of {getSeriesName(series)} levels in {year}.
         </p>
       </div>
       <svg id="chart" ref={containerRef} />
       <p className="wrapped-panel-footer">
-        The WHO daily guideline limit is {thresholds[series]["who"].value}
+        Breaches of the World Heath Organisation daily guideline limit for{" "}
+        {getSeriesName(series)} ({getSeriesDescription(series)}), which is{" "}
+        {thresholds[series]["who"].value}
         <Units />. Grey icons are days with no data.
       </p>
     </WrappedPanel>

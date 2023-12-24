@@ -1,3 +1,9 @@
+.bg-image-welcome {
+  background-image: url("./img/wrapped-welcome.png");
+  background-size: cover;
+  background-attachment: fixed;
+}
+
 .App {
   text-align: center;
 }
