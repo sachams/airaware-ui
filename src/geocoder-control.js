@@ -6,7 +6,7 @@ import MapboxGeocoder, { GeocoderOptions } from "@mapbox/mapbox-gl-geocoder";
 // TODO: Investigate replacing this code with this component:
 // https://github.com/SamSamskies/react-map-gl-geocoder
 // It might mean we can remove the code to hold off creating
-// the Geocoder in MyMap until the forwardGeocoder has been created
+// the Geocoder in DataMap until the forwardGeocoder has been created
 
 /* eslint-disable complexity,max-statements */
 export default function GeocoderControl(props) {

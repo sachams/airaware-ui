@@ -1,0 +1,57 @@
+#wrapper {
+  height: 600px;
+}
+
+.wrapped-heatmap {
+    width: 100%;
+    height: 50%;
+  }
+  
+h2 {
+    font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    margin: 0;
+    font-weight: bold;
+}
+
+h3 {
+  font: 10px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+    
+.legend-ramp {
+  background: rgba(0,0,0,0) !important;
+  margin: 10px 10px 10px 20px;
+  color: white;
+}
+
+.chart-figure {
+  color: white;
+}
+
+.wrapped-heatmap-headline {
+  font: 30px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  font-weight: bold;
+  color: #f8eae0;
+  margin: auto;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  display: block;
+  width: 60%;
+  text-align: center;
+}
+
+.wrapped-heatmap-narrative {
+  font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  /* border: 1px solid white; */
+  color: #f8eae0;
+  margin: auto;
+  margin-bottom: 20px;
+  display: block;
+  width: 60%;
+  text-align: center;
+}
+
+.wrapped-heatmap-stats {
+  padding-top: 10px;
+}

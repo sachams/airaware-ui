@@ -47,6 +47,21 @@ export const boroughOutlineDataLayer = {
   },
 };
 
+export const wrappedNodesLayer = {
+  id: "wrappedNodesLayer",
+  layout: {
+    visibility: "visible",
+  },
+  type: "circle",
+  paint: {
+    "circle-color": "#ff0000",
+    "circle-radius": 9,
+    "circle-stroke-width": 1,
+    "circle-stroke-color": "#7f7f7f",
+    "circle-opacity": 0.8,
+  },
+};
+
 export const pm25Layer = {
   id: "pm25Layer",
   type: "circle",
