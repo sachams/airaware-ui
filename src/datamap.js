@@ -29,8 +29,10 @@ import NodePopup from "./node-popup";
 import SidePanel from "./side-panel";
 import AboutDrawer from "./about-drawer";
 import { Loader } from "rsuite";
-import { DateTime } from "luxon";
 import axios from "axios";
+
+import subMonths from "date-fns/subMonths";
+import set from "date-fns/set";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
@@ -73,12 +75,15 @@ function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
 
 function DataMap() {
   const mapRef = useRef();
-  const [startDate, setStartDate] = useState(
-    DateTime.now().minus({ months: 1 })
-  );
-  const [endDate, setEndDate] = useState(DateTime.now());
 
-  const noop = () => {};
+  const endDate = set(new Date(), {
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+
+  const startDate = subMonths(endDate, 1);
 
   const [data, setData] = useState({
     siteData: nullGeoJson,
@@ -98,10 +103,10 @@ function DataMap() {
           await Promise.all([
             axios.get(`${serverUrl}/sites`),
             axios.get(
-              `${serverUrl}/site_average/pm25/${startDate.toString()}/${endDate.toString()}`
+              `${serverUrl}/site_average/pm25/${startDate.toISOString()}/${endDate.toISOString()}`
             ),
             axios.get(
-              `${serverUrl}/site_average/no2/${startDate.toString()}/${endDate.toString()}`
+              `${serverUrl}/site_average/no2/${startDate.toISOString()}/${endDate.toISOString()}`
             ),
             axios.get(`${serverUrl}/geometry/ltns`),
             axios.get(`${serverUrl}/geometry/boroughs`),
