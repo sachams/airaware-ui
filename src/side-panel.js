@@ -5,17 +5,9 @@ import subDays from "date-fns/subDays";
 import set from "date-fns/set";
 import ReportPanel from "./report-panel";
 import NodePanel from "./node-panel";
-import {
-  Drawer,
-  RadioGroup,
-  Radio,
-  ButtonToolbar,
-  Button,
-  Placeholder,
-} from "rsuite";
+import { Drawer } from "rsuite";
 
 import "./side-panel.css";
-import { select } from "@observablehq/plot";
 
 function SidePanel({ siteData, selectedNode, onClose }) {
   const [activeTab, setActiveTab] = useState("node");

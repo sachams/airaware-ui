@@ -8,7 +8,6 @@ import WrappedImageLimit from "./wrapped-image-limit";
 import WrappedPanel from "./wrapped-panel";
 
 import snowman from "./img/snowman-66.svg";
-import cane from "./img/cane-32.svg";
 import baubel from "./img/baubel-07.svg";
 
 function WrappedRanking({ data, year, series }) {

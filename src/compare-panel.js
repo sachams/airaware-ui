@@ -3,13 +3,7 @@ import ComparisonGraph from "./comparison-graph";
 import DateSelector from "./date-selector";
 import { Block, InfoOutline } from "@rsuite/icons";
 import { Grid, Row, Col } from "rsuite";
-import {
-  Radio,
-  RadioGroup,
-  FlexboxGrid,
-  CheckTreePicker,
-  Divider,
-} from "rsuite";
+import { Radio, RadioGroup, CheckTreePicker } from "rsuite";
 import "./compare-panel.css";
 import "./side-panel.css";
 import { Tooltip, Whisper } from "rsuite";
@@ -98,11 +92,6 @@ function ComparePanel({ siteData, selectedNode, dateRange, onDateChange }) {
   const nodeTypeTreeDict = generateNodeTypeTreeDict(siteData);
   const nodeTypeTreeList = generateNodeTypeTreeList(nodeTypeTreeDict);
 
-  const nodeList = siteData?.features.map((item) => ({
-    label: item.properties.name,
-    value: item.properties.site_code,
-  }));
-
   const disabledItems = siteData.features
     .filter((d) => {
       return !d.properties.is_enabled;
@@ -162,7 +151,7 @@ function ComparePanel({ siteData, selectedNode, dateRange, onDateChange }) {
               data={nodeTypeTreeList}
               renderTreeNode={(nodeData) => {
                 // console.log("PrimaryNode is ", primaryNode);
-                if (nodeData.properties == undefined) {
+                if (nodeData.properties === undefined) {
                   // Top level category
                   return <span>{nodeData.label}</span>;
                 } else if (
