@@ -1,14 +1,7 @@
 import Map, { Source, Layer, NavigationControl } from "react-map-gl";
-import React, {
-  useRef,
-  useEffect,
-  useCallback,
-  useState,
-  useMemo,
-} from "react";
+import React, { useRef } from "react";
 import { wrappedNodesLayer } from "./mapStyle";
 import GeocoderControl from "./geocoder-control";
-import WrappedNodePopup from "./wrapped-node-popup";
 
 function WrappedMap({ data, onSelect }) {
   const mapRef = useRef();
@@ -34,54 +27,16 @@ function WrappedMap({ data, onSelect }) {
 
   const siteGeoJson = getSiteGeoJson(data);
 
-  const adjustCoordinates = (event, coordinates) => {
-    // Ensure that if the map is zoomed out such that multiple
-    // copies of the feature are visible, the popup appears
-    // over the copy being pointed to.
-    while (Math.abs(event.lngLat.lng - coordinates[0]) > 180) {
-      coordinates[0] += event.lngLat.lng > coordinates[0] ? 360 : -360;
-    }
-
-    return coordinates;
-  };
-
-  const [forwardGeocoderFunc, setForwardGeocoderFunc] = useState(undefined);
-  const [hoverInfo, setHoverInfo] = useState(null);
-
-  // If the mouse leaves the canvas, remove the popover
-  const onMouseOut = useCallback((event) => {
-    setHoverInfo(null);
-  });
-
-  const onMouseMove = useCallback((event) => {
-    if (event.features.length === 0) {
-      setHoverInfo(null);
-      return;
-    }
-
-    const coordinates = adjustCoordinates(
-      event,
-      event.features[0].geometry.coordinates.slice()
-    );
-
-    setHoverInfo({
-      details: event.features[0].properties.details,
-      longitude: coordinates[0],
-      latitude: coordinates[1],
-      layerId: event?.features[0].layer.id,
-    });
-  });
-
-  const onClick = useCallback((event) => {
+  const onClick = (event) => {
     if (event.features.length === 0) {
       return;
     }
 
     onSelect(event.features[0]);
-  });
+  };
 
   const forwardGeocoder = (query) => {
-    if (query === undefined || query.length == 0) {
+    if (query === undefined || query.length === 0) {
       return [];
     }
     var matchingFeatures = [];
@@ -113,8 +68,6 @@ function WrappedMap({ data, onSelect }) {
       <Map
         mapLib={import("mapbox-gl")}
         ref={mapRef}
-        onMouseMove={onMouseMove}
-        onMouseOut={onMouseOut}
         onClick={onClick}
         interactiveLayerIds={["wrappedNodesLayer"]}
         initialViewState={{

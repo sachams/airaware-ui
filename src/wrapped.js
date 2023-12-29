@@ -1,17 +1,13 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { Modal, Button } from "rsuite";
 import "./wrapped.css";
 import WrappedMap from "./wrapped-map";
 import WrappedDrawer from "./wrapped-drawer";
 import wrappedData from "./wrapped_2023.json";
-import WelcomeImage from "./img/wrapped-welcome.png";
 
 function Wrapped({ year }) {
   const [data, setData] = useState(undefined);
   const [selectedNode, setSelectedNode] = useState(undefined);
-  const [open, setOpen] = useState(true);
-  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     // This bit below adds in some fake data
@@ -38,12 +34,6 @@ function Wrapped({ year }) {
 
   const onClose = () => {
     setSelectedNode(undefined);
-  };
-
-  const styles = {
-    backgroundSize: "cover",
-    padding: "30px",
-    backgroundImage: `url(${WelcomeImage})`,
   };
 
   return (
