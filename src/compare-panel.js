@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import ComparisonGraph from "./comparison-graph";
 import DateSelector from "./date-selector";
 import { Block, InfoOutline } from "@rsuite/icons";
-import subDays from "date-fns/subDays";
-import set from "date-fns/set";
 import { Grid, Row, Col } from "rsuite";
 import {
   Radio,
@@ -29,19 +27,7 @@ const styles = {
   },
 };
 
-const defaultEndDate = set(new Date(), {
-  hours: 0,
-  minutes: 0,
-  seconds: 0,
-  milliseconds: 0,
-});
-
-function ComparePanel({ siteData, selectedNode }) {
-  const [dateRange, setDateRange] = useState([
-    subDays(defaultEndDate, 30),
-    defaultEndDate,
-  ]);
-
+function ComparePanel({ siteData, selectedNode, dateRange, onDateChange }) {
   const [frequency, setFrequency] = useState("hour");
   const primaryNode = selectedNode;
   const [comparisonNodes, setComparisonNodes] = useState([]);
@@ -125,10 +111,6 @@ function ComparePanel({ siteData, selectedNode }) {
       return d.properties.site_code;
     });
 
-  const onDateChange = (dateRange) => {
-    setDateRange(dateRange);
-  };
-
   const onFrequencyChange = (value) => {
     setFrequency(value);
   };
@@ -157,6 +139,14 @@ function ComparePanel({ siteData, selectedNode }) {
   return (
     <div className="compare-panel">
       <Grid fluid>
+        <Row style={{ paddingBottom: "5px" }}>
+          <Col xs={24} md={4}>
+            Date range
+          </Col>
+          <Col xs={24} md={12}>
+            <DateSelector dateRange={dateRange} onChange={onDateChange} />
+          </Col>
+        </Row>
         <Row style={{ paddingBottom: "5px" }}>
           <Col xs={24} md={4}>
             Comparison
@@ -210,13 +200,6 @@ function ComparePanel({ siteData, selectedNode }) {
               style={{ width: "70%" }}
             />{" "}
           </Col>
-        </Row>
-        <Row style={{ paddingBottom: "5px" }}>
-          <Col xs={24} md={4}>
-            Date
-          </Col>
-          <DateSelector dateRange={dateRange} onChange={onDateChange} />
-          <Col xs={24} md={12}></Col>
         </Row>
         <Row style={{ paddingBottom: "5px" }}>
           <Col xs={24} md={4}>

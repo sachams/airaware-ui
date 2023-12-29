@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import DateSelector from "./date-selector";
 
-import subDays from "date-fns/subDays";
-import set from "date-fns/set";
 import { Radio, RadioGroup, FlexboxGrid, Divider } from "rsuite";
 import "./report-panel.css";
 import BreachCalendar from "./breach-calendar";
@@ -20,27 +18,11 @@ const styles = {
   },
 };
 
-const defaultEndDate = set(new Date(), {
-  hours: 0,
-  minutes: 0,
-  seconds: 0,
-  milliseconds: 0,
-});
-
-function ReportPanel({ primaryNode }) {
-  const [dateRange, setDateRange] = useState([
-    subDays(defaultEndDate, 30),
-    defaultEndDate,
-  ]);
-
-  const onDateChange = (dateRange) => {
-    setDateRange(dateRange);
-  };
-
+function ReportPanel({ primaryNode, dateRange, onDateChange }) {
   return (
     <div className="report-panel">
       <Grid fluid>
-        <Row gutter={16} className="report-row">
+        <Row className="report-row">
           <Col xs={24} md={4}>
             Date range
           </Col>
