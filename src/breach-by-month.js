@@ -2,14 +2,15 @@ import axios from "axios";
 import * as React from "react";
 import * as Plot from "@observablehq/plot";
 import { useEffect, useRef, useState } from "react";
-import "./breach-calendar.css";
+import "./breach-by-month.css";
 import { Loader } from "rsuite";
-import { format, set } from "date-fns";
 import { getSeriesName, formatMonthYear } from "./utils";
+import { set } from "date-fns";
+import { primaryNodeColour } from "./mapStyle";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
-function BreachCalendar(props) {
+function BreachByMonth(props) {
   const { primaryNode, series, dateRange, threshold } = props;
 
   const containerRef = useRef();
@@ -56,57 +57,45 @@ function BreachCalendar(props) {
       style: {
         fontSize: 14,
       },
-      // color: { legend: true, scheme: "Set2" },
-      title: `${getSeriesName(series)} daily WHO breaches`,
-      subtitle: `Red - WHO 24h limit of ${threshold.toFixed()} ug/m3 breached`,
+      title: `${getSeriesName(series)} number of daily breaches`,
       marginLeft: 60,
       marginBottom: 40,
       x: {
-        tickSize: 0,
+        type: "band",
       },
-
       y: {
-        tickFormat: formatMonthYear,
-        tickSize: 0,
-        type: "point",
-      },
-
-      color: {
-        type: "threshold",
-        domain: [threshold],
-        range: ["green", "red"],
+        label: `${getSeriesName(series)} number of WHO breaches`,
+        labelAnchor: "center",
+        nice: true,
+        ticks: 3,
       },
 
       marks: [
-        Plot.dot(primaryData, {
-          x: (d) => d.time.getUTCDate(),
-          y: (d) =>
-            set(d.time, {
-              date: 1,
-              hours: 0,
-              minutes: 0,
-              seconds: 0,
-              milliseconds: 0,
-            }),
-          fill: "value",
-          inset: 0.5,
-          r: 7,
+        Plot.axisX({
+          label: null,
+          tickFormat: formatMonthYear,
+          tickSize: 2,
+          lineWidth: 3,
         }),
-        Plot.tip(
+        Plot.barY(
           primaryData,
-          Plot.pointer({
-            x: (d) => d.time.getUTCDate(),
-            y: (d) =>
-              set(d.time, {
-                date: 1,
-                hours: 0,
-                minutes: 0,
-                seconds: 0,
-                milliseconds: 0,
-              }),
-            title: (d) =>
-              `${format(d.time, "dd MMM yy")} - ${d.value.toFixed(2)} ug/m3`,
-          })
+          Plot.groupX(
+            { y: "sum" },
+
+            {
+              x: (d) =>
+                set(d.time, {
+                  date: 1,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                  milliseconds: 0,
+                }),
+              y: (d) => (d.value > threshold ? 1 : 0),
+              fill: primaryNodeColour,
+              tip: true,
+            }
+          )
         ),
       ],
     });
@@ -123,4 +112,4 @@ function BreachCalendar(props) {
   );
 }
 
-export default React.memo(BreachCalendar);
+export default React.memo(BreachByMonth);
