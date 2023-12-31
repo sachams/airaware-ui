@@ -1,6 +1,8 @@
 import "./App.css";
+import { Routes, Route } from "react-router-dom";
 import DataMap from "./datamap";
 import Wrapped from "./wrapped";
+import NoMatch from "./no-match";
 import { useState, useEffect } from "react";
 import { Button, Modal } from "rsuite";
 
@@ -22,6 +24,12 @@ function App() {
     setShowWrapped(false);
     document.body.classList.remove("bg-image-welcome");
   };
+
+  // <Routes>
+  //   <Route path="/" element={<DataMap />} />
+  //   <Route path="/wrapped" element={<Wrapped year={2023} />} />
+  //   <Route path="*" element={<NoMatch />} />
+  // </Routes>
 
   return (
     <div>
