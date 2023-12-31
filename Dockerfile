@@ -9,14 +9,19 @@ LABEL fly_launch_runtime="Node.js"
 # Node.js app lives here
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
 ARG YARN_VERSION=1.22.19
 RUN npm install -g yarn@$YARN_VERSION --force
 
+FROM base as test
+
+# Set development environment
+ENV NODE_ENV="development"
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
+
+# Set production environment
+ENV NODE_ENV="production"
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
@@ -38,10 +43,9 @@ RUN yarn install --production=true
 # Final stage for app image
 FROM base
 
-FROM nginx:1.19
+FROM nginx:1.19 as release
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
 # # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-# CMD [ "yarn", "run", "start" ]

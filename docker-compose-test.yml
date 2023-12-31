@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  airaware-ui:
+    container_name: airaware-ui
+    ports:
+      - "3000:3000"
+    build:
+      context: ${PWD}
+      target: test
+    volumes:
+      # These volumes are mounted at run time
+      - ${PWD}:/app
+      - .bash_history:/root/.bash_history
+
+    networks:
+      - airaware
+
+networks:
+  airaware:
+    name: airaware

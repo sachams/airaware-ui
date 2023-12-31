@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  airaware-ui:
+    container_name: airaware-ui
+    ports:
+      - "80:80"
+    build:
+      context: ${PWD}
+      target: release
+    command: ["nginx", "-g", "daemon off;"]
+
+    networks:
+      - airaware
+
+networks:
+  airaware:
+    name: airaware
