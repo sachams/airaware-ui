@@ -5,6 +5,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 import "./index.css";
+import { ConfigProvider } from "antd";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
@@ -12,7 +13,28 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <ConfigProvider
+        theme={{
+          token: {
+            // Seed Token
+            colorPrimary: "#00b96b",
+            borderRadius: 2,
+
+            // Alias Token
+            colorBgContainer: "#ffffff",
+          },
+          components: {
+            Layout: {
+              headerBg: "#ffffff",
+              siderBg: "#ffffff",
+              bodyBg: "white",
+              triggerColor: "black",
+            },
+          },
+        }}
+      >
+        <App />
+      </ConfigProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

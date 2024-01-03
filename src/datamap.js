@@ -33,6 +33,7 @@ import axios from "axios";
 
 import subMonths from "date-fns/subMonths";
 import set from "date-fns/set";
+import "./datamap.css";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
@@ -325,20 +326,21 @@ function DataMap() {
   }, [data.siteData, data.ltnData]);
 
   return (
-    <>
+    <div className="datamap">
       <Map
         mapLib={import("mapbox-gl")}
         ref={mapRef}
         onMouseMove={onMouseMove}
         onMouseOut={onMouseOut}
         onClick={onClick}
+        onRender={(event) => event.target.resize()}
         interactiveLayerIds={interactiveLayerIds}
         initialViewState={{
           latitude: 51.5099903,
           longitude: -0.1304413,
           zoom: 10,
         }}
-        style={{ height: "100vh", width: "100vw" }}
+        style={{ borderRadius: "2px" }}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
@@ -428,18 +430,9 @@ function DataMap() {
           onClose={onSidePanelClose}
           selectedNode={selectedFeature?.properties}
         />
-        <AboutDrawer
-          isOpen={aboutDrawerOpen}
-          setAboutDrawerOpen={setAboutDrawerOpen}
-        />
-        <img
-          src="/logo-small-transparent.png"
-          className="logo"
-          onClick={() => setAboutDrawerOpen(true)}
-        />
       </Map>
       {data.siteData.features.length == 0 && <Loader size="lg" center />}
-    </>
+    </div>
   );
 }
 
