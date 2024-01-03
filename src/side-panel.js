@@ -5,7 +5,7 @@ import subDays from "date-fns/subDays";
 import set from "date-fns/set";
 import ReportPanel from "./report-panel";
 import NodePanel from "./node-panel";
-import { Drawer } from "rsuite";
+import { Drawer } from "antd";
 
 import "./side-panel.css";
 
@@ -33,7 +33,12 @@ function SidePanel({ siteData, selectedNode, onClose }) {
   };
 
   return (
-    <Drawer size="full" backdrop={true} open={!!selectedNode} onClose={onClose}>
+    <Drawer
+      size="large"
+      title={selectedNode?.name}
+      open={!!selectedNode}
+      onClose={onClose}
+    >
       <Drawer.Header>
         <Drawer.Title>{selectedNode?.name}</Drawer.Title>
         <Drawer.Actions>
