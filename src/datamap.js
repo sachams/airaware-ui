@@ -1,18 +1,5 @@
-import Map, {
-  Source,
-  Layer,
-  NavigationControl,
-  FullscreenControl,
-  GeolocateControl,
-  Popup,
-} from "react-map-gl";
-import React, {
-  useRef,
-  useEffect,
-  useCallback,
-  useState,
-  useMemo,
-} from "react";
+import Map, { Source, Layer, NavigationControl } from "react-map-gl";
+import React, { useRef, useEffect, useState } from "react";
 import ControlPanel from "./control-panel";
 import {
   ltnFillDataLayer,
@@ -21,13 +8,10 @@ import {
   boroughOutlineDataLayer,
   pm25Layer,
   no2Layer,
-  selectedNodeLayer,
 } from "./mapStyle";
 import GeocoderControl from "./geocoder-control";
 import LtnPopup from "./ltn-popup";
 import NodePopup from "./node-popup";
-import SidePanel from "./side-panel";
-import AboutDrawer from "./about-drawer";
 import { Loader } from "rsuite";
 import axios from "axios";
 
@@ -74,7 +58,7 @@ function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
   return featureCollection;
 }
 
-function DataMap() {
+function DataMap({ onNodeSelected, sites }) {
   const mapRef = useRef();
 
   const endDate = set(new Date(), {
@@ -97,12 +81,15 @@ function DataMap() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log("Fetching data from server");
+        if (sites === undefined) {
+          return;
+        }
+
+        console.log("Fetching datamap data from server");
 
         // Load all the data asynchronously and wait for the result
-        const [sites, siteAveragePM25, siteAverageNO2, ltnData, boroughData] =
+        const [siteAveragePM25, siteAverageNO2, ltnData, boroughData] =
           await Promise.all([
-            axios.get(`${serverUrl}/sites`),
             axios.get(
               `${serverUrl}/site_average/pm25/${startDate.toISOString()}/${endDate.toISOString()}`
             ),
@@ -115,7 +102,7 @@ function DataMap() {
 
         // Generate site geojson, enriched with pm25 and no2 averages
         const siteData = getSiteGeoJson(
-          sites.data,
+          sites,
           siteAveragePM25.data,
           siteAverageNO2.data
         );
@@ -126,12 +113,12 @@ function DataMap() {
           boroughData: boroughData.data,
         });
       } catch (error) {
-        console.error("Error fetching site data:", error);
+        console.error("Error fetching datamap data:", error);
       }
     };
 
     loadData();
-  }, []);
+  }, [sites]);
 
   const adjustCoordinates = (event, coordinates) => {
     // Ensure that if the map is zoomed out such that multiple
@@ -159,18 +146,9 @@ function DataMap() {
 
   const [features, setFeatures] = useState([]);
   const [forwardGeocoderFunc, setForwardGeocoderFunc] = useState(undefined);
-  const [aboutDrawerOpen, setAboutDrawerOpen] = useState(false);
 
   const [series, setSeries] = useState("pm25");
   const [hoverInfo, setHoverInfo] = useState(null);
-  const [selectedFeature, setSelectedFeature] = useState(null);
-  const selectedSiteCode = selectedFeature
-    ? selectedFeature.properties.site_code
-    : "";
-  const selectedNodeFilter = useMemo(
-    () => ["in", "site_code", selectedSiteCode],
-    [selectedSiteCode]
-  );
 
   const featureData = [
     { label: "LTNs", value: "ltn" },
@@ -182,16 +160,12 @@ function DataMap() {
   };
   const interactiveLayerIds = ["ltn_areas_fill", "no2Layer", "pm25Layer"];
 
-  const onLogoClick = () => {
-    setAboutDrawerOpen(true);
+  // If the mouse leaves the canvas, remove the popover
+  const onMouseOut = (event) => {
+    setHoverInfo(null);
   };
 
-  // If the mouse leaves the canvas, remove the popover
-  const onMouseOut = useCallback((event) => {
-    setHoverInfo(null);
-  });
-
-  const onMouseMove = useCallback((event) => {
+  const onMouseMove = (event) => {
     if (event.features.length === 0) {
       setHoverInfo(null);
       return;
@@ -210,6 +184,8 @@ function DataMap() {
       case "pm25Layer":
         coordinates = getNodeLayerCoordinates(event);
         break;
+      default:
+        break;
     }
 
     if (coordinates) {
@@ -220,48 +196,22 @@ function DataMap() {
         layerId: event?.features[0].layer.id,
       });
     }
-  });
-
-  const setFeatureState = (selectedFeature, isSelected) => {
-    if (selectedFeature) {
-      mapRef.current.setFeatureState(
-        { source: "nodes", id: selectedFeature.id },
-        { selected: isSelected }
-      );
-    }
   };
-  const onSidePanelClose = useCallback(() => {
-    setFeatureState(selectedFeature, false);
-    setSelectedFeature(null);
-  });
 
-  const onClick = useCallback((event) => {
+  const onClick = (event) => {
     if (event.features.length === 0) {
-      setFeatureState(selectedFeature, false);
-      setSelectedFeature(null);
       return;
     }
 
     switch (event.features[0].layer.id) {
       case "no2Layer":
       case "pm25Layer":
-        // If the node is the one that is selected, unselect it
-        if (selectedFeature?.id === event.features[0].id) {
-          setFeatureState(selectedFeature, false);
-          setSelectedFeature(null);
-        } else {
-          setFeatureState(selectedFeature, false);
-          setFeatureState(event.features[0], true);
-          setSelectedFeature(event.features[0]);
-        }
+        onNodeSelected(event.features[0].properties);
         break;
-
       default:
-        setFeatureState(selectedFeature, false);
-        setSelectedFeature(null);
         break;
     }
-  });
+  };
 
   const updateSeries = (value) => {
     console.log("Setting series to ", value);
@@ -279,7 +229,7 @@ function DataMap() {
 
   useEffect(() => {
     const forwardGeocoder = (query) => {
-      if (query === undefined || query.length == 0) {
+      if (query === undefined || query.length === 0) {
         return [];
       }
       var matchingFeatures = [];
@@ -357,8 +307,8 @@ function DataMap() {
             }}
           />
         )}
-        /* Only create the NavigationControl once forwardGeocoderFunc has been
-        set, otherwise the order on the page will be wrong */
+        {/* Only create the NavigationControl once forwardGeocoderFunc has been
+        set, otherwise the order on the page will be wrong */}
         {forwardGeocoderFunc && <NavigationControl position="bottom-right" />}
         <Source type="geojson" data={data.ltnData} generateId={true}>
           <Layer
@@ -425,13 +375,8 @@ function DataMap() {
           seriesValue={series}
           featureValue={features}
         />
-        <SidePanel
-          siteData={data.siteData}
-          onClose={onSidePanelClose}
-          selectedNode={selectedFeature?.properties}
-        />
       </Map>
-      {data.siteData.features.length == 0 && <Loader size="lg" center />}
+      {data.siteData.features.length === 0 && <Loader size="lg" center />}
     </div>
   );
 }

@@ -21,13 +21,13 @@ const styles = {
   },
 };
 
-function ComparePanel({ siteData, selectedNode, dateRange, onDateChange }) {
+function ComparePanel({ sites, selectedNode, dateRange, onDateChange }) {
   const [frequency, setFrequency] = useState("hour");
   const primaryNode = selectedNode;
   const [comparisonNodes, setComparisonNodes] = useState([]);
 
-  const nodeMap = siteData?.features.reduce(
-    (map, obj) => ((map[obj.properties.site_code] = obj.properties), map),
+  const nodeMap = sites.reduce(
+    (map, obj) => ((map[obj.site_code] = obj), map),
     {}
   );
 
@@ -39,28 +39,28 @@ function ComparePanel({ siteData, selectedNode, dateRange, onDateChange }) {
   const generateNodeTypeTreeDict = (data) => {
     let types = [];
     let nodeTree = {};
-    data.features.forEach((node) => {
+    data.forEach((node) => {
       // If we have already seen this type, add a new entry with the node
-      if (types.includes(node.properties.site_type)) {
-        nodeTree[node.properties.site_type].children.push({
-          label: node.properties.name,
-          value: node.properties.site_code,
-          properties: node.properties,
+      if (types.includes(node.site_type)) {
+        nodeTree[node.site_type].children.push({
+          label: node.name,
+          value: node.site_code,
+          properties: node,
         });
       } else {
         // Else, add a new entry
-        nodeTree[node.properties.site_type] = {
-          label: formatNodeType(node.properties.site_type),
-          value: node.properties.site_type,
+        nodeTree[node.site_type] = {
+          label: formatNodeType(node.site_type),
+          value: node.site_type,
           children: [
             {
-              label: node.properties.name,
-              value: node.properties.site_code,
-              properties: node.properties,
+              label: node.name,
+              value: node.site_code,
+              properties: node,
             },
           ],
         };
-        types.push(node.properties.site_type);
+        types.push(node.site_type);
       }
     });
     return nodeTree;
@@ -89,15 +89,15 @@ function ComparePanel({ siteData, selectedNode, dateRange, onDateChange }) {
     return sortedTypes;
   };
 
-  const nodeTypeTreeDict = generateNodeTypeTreeDict(siteData);
+  const nodeTypeTreeDict = generateNodeTypeTreeDict(sites);
   const nodeTypeTreeList = generateNodeTypeTreeList(nodeTypeTreeDict);
 
-  const disabledItems = siteData.features
+  const disabledItems = sites
     .filter((d) => {
-      return !d.properties.is_enabled;
+      return !d.is_enabled;
     })
     .map((d) => {
-      return d.properties.site_code;
+      return d.site_code;
     });
 
   const onFrequencyChange = (value) => {
