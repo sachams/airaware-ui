@@ -1,20 +1,23 @@
-import Map, { Source, Layer, NavigationControl } from "react-map-gl";
-import React, { useRef, useEffect, useState } from "react";
+import "./datamap.css";
+
+import React, { useEffect, useRef, useState } from "react";
+
+import Map, { Layer, NavigationControl, Source } from "react-map-gl";
+import { Loader } from "rsuite";
+
 import ControlPanel from "../control-panel";
-import {
-  ltnFillDataLayer,
-  ltnOutlineDataLayer,
-  boroughFillDataLayer,
-  boroughOutlineDataLayer,
-  pm25Layer,
-  no2Layer,
-} from "../mapStyle";
 import GeocoderControl from "../geocoder-control";
 import LtnPopup from "../ltn-popup";
+import {
+  boroughFillDataLayer,
+  boroughOutlineDataLayer,
+  ltnFillDataLayer,
+  ltnOutlineDataLayer,
+  no2Layer,
+  pm25Layer,
+} from "../mapStyle";
 import NodePopup from "../node-popup";
-import { Loader } from "rsuite";
 import { nullGeoJson } from "../utils";
-import "./datamap.css";
 
 function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
   // Generate a map of pm25 averages from a list of dicts

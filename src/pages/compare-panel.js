@@ -1,13 +1,23 @@
-import React, { useState } from "react";
-import ComparisonGraph from "./comparison-graph";
-import DateSelector from "./date-selector";
-import { Block, InfoOutline } from "@rsuite/icons";
-import { Grid, Row, Col } from "rsuite";
-import { Radio, RadioGroup, CheckTreePicker } from "rsuite";
 import "./compare-panel.css";
-import "./side-panel.css";
-import { Tooltip, Whisper } from "rsuite";
+
+import React, { useState } from "react";
+
 import { useParams } from "react-router-dom";
+import {
+  CheckTreePicker,
+  Col,
+  Grid,
+  Radio,
+  RadioGroup,
+  Row,
+  Tooltip,
+  Whisper,
+} from "rsuite";
+
+import { Block, InfoOutline } from "@rsuite/icons";
+
+import ComparisonGraph from "../comparison-graph";
+import DateSelector from "../date-selector";
 
 const selfTooltip = <Tooltip>This is already the primary node</Tooltip>;
 

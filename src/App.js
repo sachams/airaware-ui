@@ -1,35 +1,37 @@
 import "./App.css";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import DataMap from "./pages/datamap";
-import NoMatch from "./no-match";
-import React, { useState, useEffect } from "react";
-import logo from "./img/logo-menu.png";
+
+import React, { useEffect, useState } from "react";
+
+import { Layout, Menu, theme } from "antd";
 import axios from "axios";
 import set from "date-fns/set";
-import subMonths from "date-fns/subMonths";
-import ComparePanel from "./compare-panel";
 import subDays from "date-fns/subDays";
-import ReportPanel from "./pages/report-panel";
-import NodePanel from "./pages/node-panel";
-import DataSources from "./pages/data-sources";
-import About from "./pages/about";
-import WrappedDrawer from "./wrapped-drawer";
-import PathConstants from "./routes/pathConstants";
-import { Layout, Menu, theme } from "antd";
+import subMonths from "date-fns/subMonths";
 import {
-  useParams,
-  useLocation,
-  useMatch,
   matchRoutes,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
 } from "react-router-dom";
+
+import logo from "./img/logo-menu.png";
+import NoMatch from "./no-match";
+import About from "./pages/about";
+import ComparePanel from "./pages/compare-panel";
+import DataSources from "./pages/data-sources";
+import DataMap from "./pages/datamap";
+import NodePanel from "./pages/node-panel";
+import ReportPanel from "./pages/report-panel";
+import PathConstants from "./routes/pathConstants";
 import { nullGeoJson } from "./utils";
+import WrappedDrawer from "./wrapped-drawer";
 
 const { Header, Content, Sider } = Layout;
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
 function App() {
-  const params = useParams();
-  let location = useLocation();
+  const location = useLocation();
 
   const {
     token: { borderRadius },
@@ -111,7 +113,7 @@ function App() {
 
         setData({
           sites: sitesResponse.data,
-          siteAverageNO2: siteAveragePM25Response.data,
+          siteAverageNO2: siteAverageNO2Response.data,
           siteAveragePM25: siteAveragePM25Response.data,
           ltnData: ltnDataResponse.data,
           boroughData: boroughDataResponse.data,
