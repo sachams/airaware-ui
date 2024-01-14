@@ -14,6 +14,7 @@ import ReportPanel from "./report-panel";
 import NodePanel from "./node-panel";
 import DataSources from "./data-sources";
 import About from "./about";
+import WrappedDrawer from "./wrapped-drawer";
 
 import { Layout, Menu, theme } from "antd";
 const { Header, Content, Footer, Sider } = Layout;
@@ -30,7 +31,7 @@ const topMenuItems = [
   { key: "details", label: "Details" },
   { key: "compare", label: "Compare" },
   { key: "report", label: "Report" },
-  { key: "wrapped", label: "Wrapped" },
+  { key: "wrapped", label: "Wrapped 2023" },
 ];
 
 function App() {
@@ -113,6 +114,10 @@ function App() {
     console.log("Main menu selected ", item);
   };
 
+  const onWrappedClose = () => {
+    setSelectedTopMenuKeys(["details"]);
+  };
+
   return (
     <Layout>
       <Sider
@@ -181,6 +186,13 @@ function App() {
               onDateChange={onDateChange}
             />
           )}
+          <WrappedDrawer
+            selectedNode={
+              selectedNode && selectedTopMenuKeys.includes("wrapped")
+            }
+            year={2023}
+            onClose={onWrappedClose}
+          />
         </Content>
       </Layout>
     </Layout>
