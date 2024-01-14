@@ -17,7 +17,7 @@ root.render(
         theme={{
           token: {
             // Seed Token
-            colorPrimary: "#00b96b",
+            colorPrimary: "#437edb",
             borderRadius: 2,
 
             // Alias Token

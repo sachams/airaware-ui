@@ -134,7 +134,16 @@ function App() {
         />
       </Sider>
       <Layout>
-        <Header>
+        <Header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 10,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           {selectedNode && (
             <Menu
               mode="horizontal"
