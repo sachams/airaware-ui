@@ -21,6 +21,19 @@
   }
 }
 
+.nav-link:link { 
+  text-decoration: none; 
+} 
+.nav-link:visited { 
+  text-decoration: none; 
+} 
+.nav-link:hover { 
+  text-decoration: none; 
+} 
+.nav-link:active { 
+  text-decoration: none; 
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

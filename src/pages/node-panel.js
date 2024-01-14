@@ -2,8 +2,14 @@ import React from "react";
 import { Descriptions } from "antd";
 import "./node-panel.css";
 import { Col, Row } from "antd";
+import { useParams } from "react-router-dom";
 
-function NodePanel({ selectedNode }) {
+function NodePanel({ sites }) {
+  const params = useParams();
+  const selectedNode = sites?.find(
+    (node) => node.site_code === params.siteCode
+  );
+
   const description = [
     { label: "Name", children: selectedNode?.name },
     { label: "Site code", children: selectedNode?.site_code },

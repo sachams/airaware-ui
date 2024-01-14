@@ -3,8 +3,8 @@ import Navbar from "./navbar";
 import ComparePanel from "./compare-panel";
 import subDays from "date-fns/subDays";
 import set from "date-fns/set";
-import ReportPanel from "./report-panel";
-import NodePanel from "./node-panel";
+import ReportPanel from "./pages/report-panel";
+import NodePanel from "./pages/node-panel";
 import { Drawer } from "antd";
 
 import "./side-panel.css";

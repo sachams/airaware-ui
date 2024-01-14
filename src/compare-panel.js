@@ -7,6 +7,7 @@ import { Radio, RadioGroup, CheckTreePicker } from "rsuite";
 import "./compare-panel.css";
 import "./side-panel.css";
 import { Tooltip, Whisper } from "rsuite";
+import { useParams } from "react-router-dom";
 
 const selfTooltip = <Tooltip>This is already the primary node</Tooltip>;
 
@@ -21,9 +22,11 @@ const styles = {
   },
 };
 
-function ComparePanel({ sites, selectedNode, dateRange, onDateChange }) {
+function ComparePanel({ sites, dateRange, onDateChange }) {
+  const params = useParams();
+  const primaryNode = sites.find((node) => node.site_code === params.siteCode);
+
   const [frequency, setFrequency] = useState("hour");
-  const primaryNode = selectedNode;
   const [comparisonNodes, setComparisonNodes] = useState([]);
 
   const nodeMap = sites.reduce(

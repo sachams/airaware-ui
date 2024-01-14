@@ -6,7 +6,7 @@ function About() {
   return (
     <>
       <Row>
-        <Col xs={24} sm={12}>
+        <Col xs={24} sm={24} md={12}>
           <h2>What is Air Aware?</h2>
 
           <p>

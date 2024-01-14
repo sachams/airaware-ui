@@ -1,47 +1,40 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import DataMap from "./datamap";
-import Wrapped from "./wrapped";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import DataMap from "./pages/datamap";
 import NoMatch from "./no-match";
 import React, { useState, useEffect } from "react";
-import { Button, Modal } from "rsuite";
 import logo from "./img/logo-menu.png";
 import axios from "axios";
 import set from "date-fns/set";
 import ComparePanel from "./compare-panel";
 import subDays from "date-fns/subDays";
-import ReportPanel from "./report-panel";
-import NodePanel from "./node-panel";
-import DataSources from "./data-sources";
-import About from "./about";
+import ReportPanel from "./pages/report-panel";
+import NodePanel from "./pages/node-panel";
+import DataSources from "./pages/data-sources";
+import About from "./pages/about";
 import WrappedDrawer from "./wrapped-drawer";
-
+import PathConstants from "./routes/pathConstants";
 import { Layout, Menu, theme } from "antd";
-const { Header, Content, Footer, Sider } = Layout;
+import {
+  useParams,
+  useLocation,
+  useMatch,
+  matchRoutes,
+} from "react-router-dom";
+
+const { Header, Content, Sider } = Layout;
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
-const mainMenuItems = [
-  { key: "nodeMap", label: "Node map" },
-  { key: "city", label: "City" },
-  { key: "dataSources", label: "Data sources" },
-  { key: "about", label: "About" },
-];
-
-const topMenuItems = [
-  { key: "details", label: "Details" },
-  { key: "compare", label: "Compare" },
-  { key: "report", label: "Report" },
-  { key: "wrapped", label: "Wrapped 2023" },
-];
-
 function App() {
+  const params = useParams();
+  let location = useLocation();
+
   const {
-    token: { colorBgContainer, borderRadius },
+    token: { borderRadius },
   } = theme.useToken();
 
-  const [modalOpen, setModalOpen] = useState(true);
-  const [showWrapped, setShowWrapped] = useState(true);
-  const [selectedNode, setSelectedNode] = useState(undefined);
+  const navigate = useNavigate();
+  const [selectedSiteCode, setSelectedSiteCode] = useState(undefined);
   const [selectedMainMenuKeys, setSelectedMainMenuKeys] = useState(["nodeMap"]);
   const [selectedTopMenuKeys, setSelectedTopMenuKeys] = useState([]);
 
@@ -61,18 +54,26 @@ function App() {
     setDateRange(dateRange);
   };
 
-  const handleShowWrapped = () => {
-    setModalOpen(false);
-    setShowWrapped(true);
-    document.body.classList.remove("bg-image-welcome");
-  };
-  const handleShowDatamap = () => {
-    setModalOpen(false);
-    setShowWrapped(false);
-    document.body.classList.remove("bg-image-welcome");
-  };
+  const [sites, setSites] = useState([]);
 
-  const [sites, setSites] = useState(undefined);
+  const mainMenuItems = [
+    { key: PathConstants.NODE_MAP, label: "Node map" },
+    {
+      key: PathConstants.DATA_SOURCES,
+      label: "Data sources",
+    },
+    { key: PathConstants.ABOUT, label: "About" },
+  ];
+
+  const topMenuItems = [
+    { key: PathConstants.NODE_DETAIL, label: "Detail" },
+    { key: PathConstants.NODE_COMPARE, label: "Compare" },
+    { key: PathConstants.NODE_REPORT, label: "Report" },
+    {
+      key: PathConstants.NODE_WRAPPED,
+      label: "Wrapped 2023",
+    },
+  ];
 
   useEffect(() => {
     const loadSiteData = async () => {
@@ -91,31 +92,79 @@ function App() {
     loadSiteData();
   }, []);
 
-  // <Routes>
-  //   <Route path="/" element={<DataMap />} />
-  //   <Route path="/wrapped" element={<Wrapped year={2023} />} />
-  //   <Route path="*" element={<NoMatch />} />
-  // </Routes>
-  // <img src={logo} className="logo" />
+  useEffect(() => {
+    console.log("Locaion is ", location);
+
+    // Set the menu based on route
+    const routes = Object.values(PathConstants).map((item) => ({
+      path: item,
+    }));
+
+    // Get the base route - this should then match either a top menu or main menu route
+    const matches = matchRoutes(routes, location);
+
+    if (matches.length === 0) {
+      console.log("Didn't match any routes - returning");
+      setSelectedSiteCode(undefined);
+      return;
+    }
+
+    console.log("Matches", matches);
+    console.log("Setting selected node to ", matches[0].params.siteCode);
+    setSelectedSiteCode(matches[0].params.siteCode);
+
+    const topItem = topMenuItems.find(
+      (item) => item.key === matches[0].route.path
+    );
+
+    if (topItem) {
+      console.log("Setting top menu to ", matches[0].route.path);
+      setSelectedTopMenuKeys(matches[0].route.path);
+    } else {
+      console.log("Setting top menu to null");
+      setSelectedTopMenuKeys([]);
+    }
+
+    const mainItem = mainMenuItems.find(
+      (item) => item.key === matches[0].route.path
+    );
+
+    if (mainItem) {
+      console.log("Setting main menu to ", matches[0].route.path);
+      setSelectedMainMenuKeys(matches[0].route.path);
+    } else {
+      console.log("Setting main menu to null");
+      setSelectedMainMenuKeys([]);
+    }
+
+    console.log("Routes", routes);
+  }, [location]);
 
   const onMapNodeSelected = (node) => {
     console.log("Selected ", node);
-    setSelectedMainMenuKeys([]);
-    setSelectedTopMenuKeys(["details"]);
-    setSelectedNode(node);
+    navigate(
+      topMenuItems
+        .find((item) => item.key === PathConstants.NODE_DETAIL)
+        .key.replace(":siteCode", node.site_code)
+    );
   };
   const onTopMenuSelected = (item) => {
-    setSelectedTopMenuKeys(item.selectedKeys);
-    console.log("Top menu selected ", item);
+    console.log("Top menu selected ", item, selectedSiteCode);
+    navigate(item.key.replace(":siteCode", selectedSiteCode));
   };
+
   const onMainMenuSelected = (item) => {
-    setSelectedNode(undefined);
-    setSelectedMainMenuKeys(item.selectedKeys);
+    navigate(item.key);
     console.log("Main menu selected ", item);
   };
 
   const onWrappedClose = () => {
-    setSelectedTopMenuKeys(["details"]);
+    const path = topMenuItems
+      .find((item) => item.key === PathConstants.NODE_DETAIL)
+      .key.replace(":siteCode", selectedSiteCode);
+
+    console.log("Navigating to ", path);
+    navigate(path);
   };
 
   return (
@@ -149,7 +198,7 @@ function App() {
             alignItems: "center",
           }}
         >
-          {selectedNode && (
+          {selectedTopMenuKeys.length > 0 && (
             <Menu
               mode="horizontal"
               items={topMenuItems}
@@ -160,39 +209,48 @@ function App() {
           )}
         </Header>
         <Content style={{ margin: "16px 16px 0", borderRadius: borderRadius }}>
-          {!selectedNode && selectedMainMenuKeys.includes("nodeMap") && (
-            <DataMap sites={sites} onNodeSelected={onMapNodeSelected} />
-          )}
-          {!selectedNode && selectedMainMenuKeys.includes("dataSources") && (
-            <DataSources />
-          )}
-          {!selectedNode && selectedMainMenuKeys.includes("about") && <About />}
-
-          {selectedNode && selectedTopMenuKeys.includes("details") && (
-            <NodePanel selectedNode={selectedNode} />
-          )}
-          {selectedNode && selectedTopMenuKeys.includes("compare") && (
-            <ComparePanel
-              sites={sites}
-              selectedNode={selectedNode}
-              dateRange={dateRange}
-              onDateChange={onDateChange}
+          <Routes>
+            <Route
+              path={PathConstants.NODE_MAP}
+              element={
+                <DataMap sites={sites} onNodeSelected={onMapNodeSelected} />
+              }
             />
-          )}
-          {selectedNode && selectedTopMenuKeys.includes("report") && (
-            <ReportPanel
-              primaryNode={selectedNode}
-              dateRange={dateRange}
-              onDateChange={onDateChange}
+            <Route
+              path={PathConstants.NODE_DETAIL}
+              element={<NodePanel sites={sites} />}
             />
-          )}
-          <WrappedDrawer
-            selectedNode={
-              selectedNode && selectedTopMenuKeys.includes("wrapped")
-            }
-            year={2023}
-            onClose={onWrappedClose}
-          />
+            <Route
+              path={PathConstants.NODE_COMPARE}
+              element={
+                <ComparePanel
+                  sites={sites}
+                  dateRange={dateRange}
+                  onDateChange={onDateChange}
+                />
+              }
+            />
+            <Route
+              path={PathConstants.NODE_REPORT}
+              element={
+                <ReportPanel
+                  sites={sites}
+                  dateRange={dateRange}
+                  onDateChange={onDateChange}
+                />
+              }
+            />
+            <Route
+              path={PathConstants.NODE_WRAPPED}
+              element={<WrappedDrawer year={2023} onClose={onWrappedClose} />}
+            />
+            <Route
+              path={PathConstants.DATA_SOURCES}
+              element={<DataSources />}
+            />
+            <Route path={PathConstants.ABOUT} element={<About />} />
+            <Route path="*" element={<NoMatch />} />
+          </Routes>
         </Content>
       </Layout>
     </Layout>

@@ -7,8 +7,11 @@ import "./wrapped-drawer.css";
 import DesktopImage from "./img/wrapped-desktop.png";
 import MobileImage from "./img/wrapped-mobile.png";
 import wrappedData from "./wrapped_2023.json";
+import { useParams } from "react-router-dom";
 
-function WrappedDrawer({ selectedNode, year, onClose }) {
+function WrappedDrawer({ year, onClose }) {
+  const params = useParams();
+
   const isMobile = useMediaQuery("(max-width: 767px)");
   const styles = {
     container: (isMobile) => ({
@@ -19,11 +22,11 @@ function WrappedDrawer({ selectedNode, year, onClose }) {
   };
 
   const nodeData = wrappedData.find(
-    (node) => node.site_code === selectedNode?.site_code
+    (node) => node.details.site_code === params.siteCode
   );
 
   return (
-    <Drawer size="full" backdrop={true} open={!!selectedNode} onClose={onClose}>
+    <Drawer size="full" backdrop={true} open={true} onClose={onClose}>
       <Drawer.Body style={styles.container(isMobile)}>
         <WrappedPresentation data={nodeData} year={year}></WrappedPresentation>
       </Drawer.Body>

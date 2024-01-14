@@ -1,14 +1,18 @@
 import React from "react";
-import DateSelector from "./date-selector";
+import DateSelector from "../date-selector";
 
 import "./report-panel.css";
-import BreachCalendar from "./breach-calendar";
-import BreachByMonth from "./breach-by-month";
-import HourOfDayGraph from "./hour-of-day-graph";
-import Heatmap from "./heatmap";
+import BreachCalendar from "../breach-calendar";
+import BreachByMonth from "../breach-by-month";
+import HourOfDayGraph from "../hour-of-day-graph";
+import Heatmap from "../heatmap";
 import { Grid, Row, Col } from "rsuite";
+import { useParams } from "react-router-dom";
 
-function ReportPanel({ primaryNode, dateRange, onDateChange }) {
+function ReportPanel({ sites, dateRange, onDateChange }) {
+  const params = useParams();
+  const primaryNode = sites?.find((node) => node.site_code === params.siteCode);
+
   return (
     <div className="report-panel">
       <Grid fluid>

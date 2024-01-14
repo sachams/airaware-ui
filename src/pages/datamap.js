@@ -1,6 +1,6 @@
 import Map, { Source, Layer, NavigationControl } from "react-map-gl";
 import React, { useRef, useEffect, useState } from "react";
-import ControlPanel from "./control-panel";
+import ControlPanel from "../control-panel";
 import {
   ltnFillDataLayer,
   ltnOutlineDataLayer,
@@ -8,10 +8,10 @@ import {
   boroughOutlineDataLayer,
   pm25Layer,
   no2Layer,
-} from "./mapStyle";
-import GeocoderControl from "./geocoder-control";
-import LtnPopup from "./ltn-popup";
-import NodePopup from "./node-popup";
+} from "../mapStyle";
+import GeocoderControl from "../geocoder-control";
+import LtnPopup from "../ltn-popup";
+import NodePopup from "../node-popup";
 import { Loader } from "rsuite";
 import axios from "axios";
 
