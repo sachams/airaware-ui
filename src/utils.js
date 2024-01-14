@@ -56,3 +56,8 @@ export const thresholds = {
 export const formatMonthYear = (d) => {
   return format(d, "MMM yy");
 };
+
+export const nullGeoJson = {
+  type: "FeatureCollection",
+  features: [],
+};

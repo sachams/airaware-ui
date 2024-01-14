@@ -13,18 +13,8 @@ import GeocoderControl from "../geocoder-control";
 import LtnPopup from "../ltn-popup";
 import NodePopup from "../node-popup";
 import { Loader } from "rsuite";
-import axios from "axios";
-
-import subMonths from "date-fns/subMonths";
-import set from "date-fns/set";
+import { nullGeoJson } from "../utils";
 import "./datamap.css";
-
-const serverUrl = process.env.REACT_APP_SERVER_URL;
-
-const nullGeoJson = {
-  type: "FeatureCollection",
-  features: [],
-};
 
 function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
   // Generate a map of pm25 averages from a list of dicts
@@ -58,60 +48,33 @@ function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
   return featureCollection;
 }
 
-function DataMap({ onNodeSelected, sites }) {
+function DataMap({
+  onNodeSelected,
+  sites,
+  ltnData,
+  boroughData,
+  siteAverageNO2,
+  siteAveragePM25,
+}) {
   const mapRef = useRef();
 
-  const endDate = set(new Date(), {
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0,
-  });
-
-  const startDate = subMonths(endDate, 1);
-
-  const [data, setData] = useState({
-    siteData: nullGeoJson,
-    ltnData: nullGeoJson,
-    boroughData: nullGeoJson,
-  });
+  const [siteData, setSiteData] = useState(nullGeoJson);
 
   // Thanks https://stackoverflow.com/a/44185591
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        if (sites === undefined) {
+        if (!sites || !siteAverageNO2 || !siteAveragePM25) {
+          console.log("One or more input data null");
           return;
         }
-
-        console.log("Fetching datamap data from server");
-
-        // Load all the data asynchronously and wait for the result
-        const [siteAveragePM25, siteAverageNO2, ltnData, boroughData] =
-          await Promise.all([
-            axios.get(
-              `${serverUrl}/site_average/pm25/${startDate.toISOString()}/${endDate.toISOString()}`
-            ),
-            axios.get(
-              `${serverUrl}/site_average/no2/${startDate.toISOString()}/${endDate.toISOString()}`
-            ),
-            axios.get(`${serverUrl}/geometry/ltns`),
-            axios.get(`${serverUrl}/geometry/boroughs`),
-          ]);
+        console.log("All input data ok");
 
         // Generate site geojson, enriched with pm25 and no2 averages
-        const siteData = getSiteGeoJson(
-          sites,
-          siteAveragePM25.data,
-          siteAverageNO2.data
-        );
+        const siteData = getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2);
 
-        setData({
-          siteData: siteData,
-          ltnData: ltnData.data,
-          boroughData: boroughData.data,
-        });
+        setSiteData(siteData);
       } catch (error) {
         console.error("Error fetching datamap data:", error);
       }
@@ -235,7 +198,7 @@ function DataMap({ onNodeSelected, sites }) {
       var matchingFeatures = [];
 
       // Find matching nodes
-      data.siteData.features.forEach((feature) => {
+      siteData?.features.forEach((feature) => {
         // Handle queries with different capitalization
         // than the source data by calling toLowerCase().
         if (
@@ -252,7 +215,7 @@ function DataMap({ onNodeSelected, sites }) {
       });
 
       // Find matching LTNs
-      data.ltnData.features.forEach((feature) => {
+      ltnData.features.forEach((feature) => {
         // Handle queries with different capitalization
         // than the source data by calling toLowerCase().
         if (
@@ -270,10 +233,10 @@ function DataMap({ onNodeSelected, sites }) {
 
     // Only set the forwardGeocoderFunc once we have data, as we can only set this once
     // on the Geocoder component
-    if (data.siteData.features.length > 0) {
+    if (siteData?.features.length > 0) {
       setForwardGeocoderFunc(() => forwardGeocoder);
     }
-  }, [data.siteData, data.ltnData]);
+  }, [siteData, ltnData]);
 
   return (
     <div className="datamap">
@@ -310,7 +273,7 @@ function DataMap({ onNodeSelected, sites }) {
         {/* Only create the NavigationControl once forwardGeocoderFunc has been
         set, otherwise the order on the page will be wrong */}
         {forwardGeocoderFunc && <NavigationControl position="bottom-right" />}
-        <Source type="geojson" data={data.ltnData} generateId={true}>
+        <Source type="geojson" data={ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
             layout={{
@@ -324,7 +287,7 @@ function DataMap({ onNodeSelected, sites }) {
             }}
           />
         </Source>
-        <Source type="geojson" data={data.boroughData} generateId={true}>
+        <Source type="geojson" data={boroughData} generateId={true}>
           <Layer
             {...boroughFillDataLayer}
             layout={{
@@ -353,12 +316,7 @@ function DataMap({ onNodeSelected, sites }) {
             properties={hoverInfo.properties}
           />
         )}
-        <Source
-          id="nodes"
-          type="geojson"
-          data={data.siteData}
-          generateId={true}
-        >
+        <Source id="nodes" type="geojson" data={siteData} generateId={true}>
           <Layer
             {...pm25Layer}
             layout={{ visibility: series === "pm25" ? "visible" : "none" }}
@@ -376,7 +334,7 @@ function DataMap({ onNodeSelected, sites }) {
           featureValue={features}
         />
       </Map>
-      {data.siteData.features.length === 0 && <Loader size="lg" center />}
+      {siteData?.features.length === 0 && <Loader size="lg" center />}
     </div>
   );
 }

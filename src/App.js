@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import logo from "./img/logo-menu.png";
 import axios from "axios";
 import set from "date-fns/set";
+import subMonths from "date-fns/subMonths";
 import ComparePanel from "./compare-panel";
 import subDays from "date-fns/subDays";
 import ReportPanel from "./pages/report-panel";
@@ -21,6 +22,7 @@ import {
   useMatch,
   matchRoutes,
 } from "react-router-dom";
+import { nullGeoJson } from "./utils";
 
 const { Header, Content, Sider } = Layout;
 const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -45,6 +47,8 @@ function App() {
     milliseconds: 0,
   });
 
+  const startDate = subMonths(defaultEndDate, 1);
+
   const [dateRange, setDateRange] = useState([
     subDays(defaultEndDate, 30),
     defaultEndDate,
@@ -54,7 +58,13 @@ function App() {
     setDateRange(dateRange);
   };
 
-  const [sites, setSites] = useState([]);
+  const [data, setData] = useState({
+    sites: [],
+    siteAverageNO2: undefined,
+    siteAveragePM25: undefined,
+    ltnData: nullGeoJson,
+    boroughData: nullGeoJson,
+  });
 
   const mainMenuItems = [
     { key: PathConstants.NODE_MAP, label: "Node map" },
@@ -81,9 +91,31 @@ function App() {
         console.log("Fetching site data from the server");
 
         // Load all the data asynchronously and wait for the result
-        const sitesResponse = await axios.get(`${serverUrl}/sites`);
+        const [
+          sitesResponse,
+          siteAveragePM25Response,
+          siteAverageNO2Response,
+          ltnDataResponse,
+          boroughDataResponse,
+        ] = await Promise.all([
+          axios.get(`${serverUrl}/sites`),
+          axios.get(
+            `${serverUrl}/site_average/pm25/${startDate.toISOString()}/${defaultEndDate.toISOString()}`
+          ),
+          axios.get(
+            `${serverUrl}/site_average/no2/${startDate.toISOString()}/${defaultEndDate.toISOString()}`
+          ),
+          axios.get(`${serverUrl}/geometry/ltns`),
+          axios.get(`${serverUrl}/geometry/boroughs`),
+        ]);
 
-        setSites(sitesResponse.data);
+        setData({
+          sites: sitesResponse.data,
+          siteAverageNO2: siteAveragePM25Response.data,
+          siteAveragePM25: siteAveragePM25Response.data,
+          ltnData: ltnDataResponse.data,
+          boroughData: boroughDataResponse.data,
+        });
       } catch (error) {
         console.error("Error fetching site data:", error);
       }
@@ -213,18 +245,25 @@ function App() {
             <Route
               path={PathConstants.NODE_MAP}
               element={
-                <DataMap sites={sites} onNodeSelected={onMapNodeSelected} />
+                <DataMap
+                  sites={data.sites}
+                  siteAverageNO2={data.siteAverageNO2}
+                  siteAveragePM25={data.siteAveragePM25}
+                  ltnData={data.ltnData}
+                  boroughData={data.boroughData}
+                  onNodeSelected={onMapNodeSelected}
+                />
               }
             />
             <Route
               path={PathConstants.NODE_DETAIL}
-              element={<NodePanel sites={sites} />}
+              element={<NodePanel sites={data.sites} />}
             />
             <Route
               path={PathConstants.NODE_COMPARE}
               element={
                 <ComparePanel
-                  sites={sites}
+                  sites={data.sites}
                   dateRange={dateRange}
                   onDateChange={onDateChange}
                 />
@@ -234,7 +273,7 @@ function App() {
               path={PathConstants.NODE_REPORT}
               element={
                 <ReportPanel
-                  sites={sites}
+                  sites={data.sites}
                   dateRange={dateRange}
                   onDateChange={onDateChange}
                 />
