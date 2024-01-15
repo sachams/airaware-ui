@@ -1,13 +1,17 @@
 import React from "react";
-import { Descriptions } from "antd";
-import { Col, Row } from "antd";
+
+import { Col, Descriptions, Row } from "antd";
 
 function DataSources() {
   const description = [
     {
       label: "Air quality node data",
       children: (
-        <a href="https://www.breathelondon.org/developers" target="_blank">
+        <a
+          href="https://www.breathelondon.org/developers"
+          target="_blank"
+          rel="noreferrer"
+        >
           Breathe London API
         </a>
       ),
@@ -18,6 +22,7 @@ function DataSources() {
         <a
           href="https://blog.westminster.ac.uk/ata/projects/london-ltn-dataset/"
           target="_blank"
+          rel="noreferrer"
         >
           University of Westminster
         </a>

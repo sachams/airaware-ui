@@ -1,10 +1,12 @@
+import "./wrapped-heatmap.css";
+
 import * as React from "react";
-import * as Plot from "@observablehq/plot";
 import { useEffect, useRef } from "react";
+
+import * as Plot from "@observablehq/plot";
+
 import { getSeriesName } from "./utils";
 import WrappedPanel from "./wrapped-panel";
-
-import "./wrapped-heatmap.css";
 
 function WrappedHeatmap({ data, series, year }) {
   const containerRef = useRef();
@@ -18,11 +20,11 @@ function WrappedHeatmap({ data, series, year }) {
     let min = undefined;
 
     data.forEach((d) => {
-      if (max == undefined || d.value > max.value) {
+      if (max === undefined || d.value > max.value) {
         max = d;
       }
 
-      if (min == undefined || d.value < min.value) {
+      if (min === undefined || d.value < min.value) {
         min = d;
       }
     });
@@ -44,9 +46,9 @@ function WrappedHeatmap({ data, series, year }) {
   };
 
   const formatTime = (hour) => {
-    if (hour == 0) {
+    if (hour === 0) {
       return "midnight";
-    } else if (hour == 12) {
+    } else if (hour === 12) {
       return "noon";
     } else if (hour < 12) {
       return `${hour}am`;

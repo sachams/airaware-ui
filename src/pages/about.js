@@ -1,6 +1,8 @@
-import React from "react";
-import { Col, Row } from "antd";
 import "./about.css";
+
+import React from "react";
+
+import { Col, Row } from "antd";
 
 function About() {
   return (
@@ -12,12 +14,20 @@ function About() {
           <p>
             Air Aware is a project set up by Sacha Manson-Smith and Louise
             Thomas to look at data from the{" "}
-            <a href="https://www.breathelondon.org/" target="_blank">
+            <a
+              href="https://www.breathelondon.org/"
+              target="_blank"
+              rel="noreferrer"
+            >
               Breathe London
             </a>{" "}
             network of air quality sensors. This website helps us (and others)
             analyse the data. You can read more about the project on our{" "}
-            <a href="https://airaware.substack.com/" target="_blank">
+            <a
+              href="https://airaware.substack.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
               Air Aware blog
             </a>
             .
@@ -27,7 +37,11 @@ function About() {
             What should we build next? What problems are you trying to
             investigate, and how can we build tools that will help? Please let
             us know on our{" "}
-            <a href="https://air-aware.canny.io/" target="_blank">
+            <a
+              href="https://air-aware.canny.io/"
+              target="_blank"
+              rel="noreferrer"
+            >
               Feature Requests board
             </a>
           </p>

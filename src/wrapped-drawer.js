@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import WrappedPresentation from "./wrapped-presentation";
-import { Drawer } from "rsuite";
-import { useMediaQuery } from "./hooks";
-
 import "./wrapped-drawer.css";
+
+import React from "react";
+
+import { useParams } from "react-router-dom";
+import { Drawer } from "rsuite";
+
+import { useMediaQuery } from "./hooks";
 import DesktopImage from "./img/wrapped-desktop.png";
 import MobileImage from "./img/wrapped-mobile.png";
+import WrappedPresentation from "./wrapped-presentation";
 import wrappedData from "./wrapped_2023.json";
-import { useParams } from "react-router-dom";
 
 function WrappedDrawer({ year, onClose }) {
   const params = useParams();

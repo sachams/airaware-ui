@@ -213,7 +213,7 @@ function App() {
           console.log(collapsed, type);
         }}
       >
-        <img src={logo} className="logo" />
+        <img src={logo} className="logo" alt="Air Aware logo" />
         <Menu
           mode="inline"
           items={mainMenuItems}

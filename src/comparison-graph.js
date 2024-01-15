@@ -1,10 +1,14 @@
-import axios from "axios";
-import * as React from "react";
-import * as Plot from "@observablehq/plot";
-import { useEffect, useRef, useState } from "react";
-import { primaryNodeColour, comparisonNodeColour } from "./mapStyle";
 import "./comparison-graph.css";
+
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+
+import axios from "axios";
 import { Loader } from "rsuite";
+
+import * as Plot from "@observablehq/plot";
+
+import { comparisonNodeColour, primaryNodeColour } from "./mapStyle";
 import { getSeriesName } from "./utils";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -96,7 +100,7 @@ function ComparisonGraph(props) {
     }
     const data = primaryData.concat(comparisonData);
 
-    if (data.length == 0) return;
+    if (data.length === 0) return;
 
     const plot = Plot.plot({
       color: {
@@ -121,16 +125,16 @@ function ComparisonGraph(props) {
         Plot.ruleX(data, Plot.pointerX({ x: "time", stroke: "red" })),
 
         Plot.dot(
-          data.filter((d) => d.type == "Node"),
+          data.filter((d) => d.type === "Node"),
           Plot.pointerX({ x: "time", y: "value", stroke: "type" })
         ),
         Plot.dot(
-          data.filter((d) => d.type == "Comparison"),
+          data.filter((d) => d.type === "Comparison"),
           Plot.pointerX({ x: "time", y: "value", stroke: "type" })
         ),
 
         Plot.text(
-          data.filter((d) => d.type == "Comparison"),
+          data.filter((d) => d.type === "Comparison"),
           Plot.pointerX({
             x: "time",
             frameAnchor: "top-left",
@@ -141,7 +145,7 @@ function ComparisonGraph(props) {
           })
         ),
         Plot.text(
-          data.filter((d) => d.type == "Node"),
+          data.filter((d) => d.type === "Node"),
           Plot.pointerX({
             x: "time",
             frameAnchor: "top-left",
@@ -152,7 +156,7 @@ function ComparisonGraph(props) {
           })
         ),
         Plot.text(
-          data.filter((d) => d.type == "Comparison"),
+          data.filter((d) => d.type === "Comparison"),
           Plot.pointerX({
             x: "time",
             frameAnchor: "top-left",
@@ -174,7 +178,7 @@ function ComparisonGraph(props) {
         }),
         // Add primary average line
         Plot.ruleY(
-          data.filter((d) => d.type == "Node"),
+          data.filter((d) => d.type === "Node"),
           Plot.groupZ(
             { y: "mean" },
             {
@@ -187,7 +191,7 @@ function ComparisonGraph(props) {
         ),
         // Add comparison average line
         Plot.ruleY(
-          data.filter((d) => d.type == "Comparison"),
+          data.filter((d) => d.type === "Comparison"),
           Plot.groupZ(
             { y: "mean" },
             {

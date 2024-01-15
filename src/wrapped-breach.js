@@ -1,12 +1,14 @@
+import "./wrapped-breach.css";
+
 import * as React from "react";
 import { useEffect, useRef } from "react";
-import "./wrapped-breach.css";
-import { getSeriesName, getSeriesDescription } from "./utils";
+
 import * as d3 from "d3";
 import { layout } from "d3-iconarray";
+
 import { appendStockingIcon, appendTreeIcon } from "./svg-utils";
 import Units from "./units";
-import { thresholds } from "./utils";
+import { getSeriesDescription, getSeriesName, thresholds } from "./utils";
 import WrappedPanel from "./wrapped-panel";
 
 function WrappedBreach({ data, series, year }) {
@@ -29,7 +31,6 @@ function WrappedBreach({ data, series, year }) {
     const margin = { top: 0, left: 20, bottom: 0, right: 20 }; //note that objects need to be wrapped in () so they're evaluated
     const gridWidth = 18;
     const width = 315;
-    const height = 800;
     const arrayScale = d3
       .scaleLinear()
       .domain([0, 20])

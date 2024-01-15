@@ -1,10 +1,13 @@
-import axios from "axios";
-import * as React from "react";
-import * as Plot from "@observablehq/plot";
-import { useEffect, useRef, useState } from "react";
 import "./heatmap.css";
+
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+
+import axios from "axios";
 import { Loader } from "rsuite";
-import { format, set } from "date-fns";
+
+import * as Plot from "@observablehq/plot";
+
 import { getSeriesName } from "./utils";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -49,12 +52,8 @@ function Heatmap(props) {
     }
   }, [primaryNode, series, startDate, endDate, threshold]);
 
-  const formatDay = (d) => {
-    return format(d, "ddd");
-  };
-
   useEffect(() => {
-    if (primaryData.length == 0) return;
+    if (primaryData.length === 0) return;
 
     const plot = Plot.plot({
       style: {
