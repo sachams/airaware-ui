@@ -2,8 +2,8 @@ import "./datamap.css";
 
 import React, { useEffect, useRef, useState } from "react";
 
+import { Spin } from "antd";
 import Map, { Layer, NavigationControl, Source } from "react-map-gl";
-import { Loader } from "rsuite";
 
 import ControlPanel from "../control-panel";
 import GeocoderControl from "../geocoder-control";
@@ -337,7 +337,7 @@ function DataMap({
           featureValue={features}
         />
       </Map>
-      {siteData?.features.length === 0 && <Loader size="lg" center />}
+      {siteData?.features.length === 0 && <Spin size="large" fullscreen />}
     </div>
   );
 }
