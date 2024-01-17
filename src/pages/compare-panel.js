@@ -2,17 +2,9 @@ import "./compare-panel.css";
 
 import React, { useState } from "react";
 
+import { Col, Row } from "antd";
 import { useParams } from "react-router-dom";
-import {
-  CheckTreePicker,
-  Col,
-  Grid,
-  Radio,
-  RadioGroup,
-  Row,
-  Tooltip,
-  Whisper,
-} from "rsuite";
+import { CheckTreePicker, Radio, RadioGroup, Tooltip, Whisper } from "rsuite";
 
 import { Block, InfoOutline } from "@rsuite/icons";
 
@@ -140,112 +132,110 @@ function ComparePanel({ sites, dateRange, onDateChange }) {
 
   return (
     <div className="compare-panel">
-      <Grid fluid>
-        <Row style={{ paddingBottom: "5px" }}>
-          <Col xs={24} md={4}>
-            Date range
-          </Col>
-          <Col xs={24} md={12}>
-            <DateSelector dateRange={dateRange} onChange={onDateChange} />
-          </Col>
-        </Row>
-        <Row style={{ paddingBottom: "5px" }}>
-          <Col xs={24} md={4}>
-            Comparison
-          </Col>
-          <Col xs={24} md={12}>
-            <CheckTreePicker
-              defaultExpandAll={false}
-              placeholder="Select comparison"
-              size="sm"
-              onChange={onComparisonNodesChange}
-              uncheckableItemValues={[primaryNode?.site_code, ...disabledItems]}
-              disabledItemValues={[primaryNode?.site_code, ...disabledItems]}
-              data={nodeTypeTreeList}
-              renderTreeNode={(nodeData) => {
-                // console.log("PrimaryNode is ", primaryNode);
-                if (nodeData.properties === undefined) {
-                  // Top level category
-                  return <span>{nodeData.label}</span>;
-                } else if (
-                  nodeData.properties.site_code === primaryNode?.site_code
-                ) {
-                  // It's the same node
-                  return (
-                    <Whisper
-                      placement="top"
-                      trigger="hover"
-                      speaker={selfTooltip}
-                    >
-                      <span>
-                        <InfoOutline /> {nodeData.label}
-                      </span>
-                    </Whisper>
-                  );
-                } else if (!nodeData.properties?.is_enabled) {
-                  // It's disabled
-                  return (
-                    <Whisper
-                      placement="top"
-                      trigger="hover"
-                      speaker={disabledTooltip}
-                    >
-                      <span>
-                        <Block /> {nodeData.label}
-                      </span>
-                    </Whisper>
-                  );
-                } else {
-                  return <span>{nodeData.label}</span>;
-                }
-              }}
-              style={{ width: "70%" }}
-            />{" "}
-          </Col>
-        </Row>
-        <Row style={{ paddingBottom: "5px" }}>
-          <Col xs={24} md={4}>
-            Frequency
-          </Col>
-          <Col xs={24} md={12}>
-            <RadioGroup
-              onChange={onFrequencyChange}
-              name="frequency"
-              inline
-              appearance="picker"
-              defaultValue={frequency}
-              style={styles.radioGroup}
-            >
-              <Radio style={styles.radio} value="hour">
-                Hourly
-              </Radio>
-              <Radio style={styles.radio} value="day">
-                Daily
-              </Radio>
-            </RadioGroup>
-          </Col>
-        </Row>
-        <Row style={{ paddingBottom: "5px" }}>
-          <Col xs={24} md={12}>
-            <ComparisonGraph
-              primaryNode={primaryNode}
-              comparisonNodes={comparisonNodes}
-              series="pm25"
-              dateRange={dateRange}
-              frequency={frequency}
-            />
-          </Col>
-          <Col xs={24} md={12}>
-            <ComparisonGraph
-              primaryNode={primaryNode}
-              comparisonNodes={comparisonNodes}
-              series="no2"
-              dateRange={dateRange}
-              frequency={frequency}
-            />
-          </Col>
-        </Row>
-      </Grid>
+      <Row style={{ paddingBottom: "5px" }}>
+        <Col xs={24} md={4}>
+          Date range
+        </Col>
+        <Col xs={24} md={12}>
+          <DateSelector dateRange={dateRange} onChange={onDateChange} />
+        </Col>
+      </Row>
+      <Row style={{ paddingBottom: "5px" }}>
+        <Col xs={24} md={4}>
+          Comparison
+        </Col>
+        <Col xs={24} md={12}>
+          <CheckTreePicker
+            defaultExpandAll={false}
+            placeholder="Select comparison"
+            size="sm"
+            onChange={onComparisonNodesChange}
+            uncheckableItemValues={[primaryNode?.site_code, ...disabledItems]}
+            disabledItemValues={[primaryNode?.site_code, ...disabledItems]}
+            data={nodeTypeTreeList}
+            renderTreeNode={(nodeData) => {
+              // console.log("PrimaryNode is ", primaryNode);
+              if (nodeData.properties === undefined) {
+                // Top level category
+                return <span>{nodeData.label}</span>;
+              } else if (
+                nodeData.properties.site_code === primaryNode?.site_code
+              ) {
+                // It's the same node
+                return (
+                  <Whisper
+                    placement="top"
+                    trigger="hover"
+                    speaker={selfTooltip}
+                  >
+                    <span>
+                      <InfoOutline /> {nodeData.label}
+                    </span>
+                  </Whisper>
+                );
+              } else if (!nodeData.properties?.is_enabled) {
+                // It's disabled
+                return (
+                  <Whisper
+                    placement="top"
+                    trigger="hover"
+                    speaker={disabledTooltip}
+                  >
+                    <span>
+                      <Block /> {nodeData.label}
+                    </span>
+                  </Whisper>
+                );
+              } else {
+                return <span>{nodeData.label}</span>;
+              }
+            }}
+            style={{ width: "70%" }}
+          />{" "}
+        </Col>
+      </Row>
+      <Row style={{ paddingBottom: "5px" }}>
+        <Col xs={24} md={4}>
+          Frequency
+        </Col>
+        <Col xs={24} md={12}>
+          <RadioGroup
+            onChange={onFrequencyChange}
+            name="frequency"
+            inline
+            appearance="picker"
+            defaultValue={frequency}
+            style={styles.radioGroup}
+          >
+            <Radio style={styles.radio} value="hour">
+              Hourly
+            </Radio>
+            <Radio style={styles.radio} value="day">
+              Daily
+            </Radio>
+          </RadioGroup>
+        </Col>
+      </Row>
+      <Row style={{ paddingBottom: "5px" }}>
+        <Col xs={24} md={12}>
+          <ComparisonGraph
+            primaryNode={primaryNode}
+            comparisonNodes={comparisonNodes}
+            series="pm25"
+            dateRange={dateRange}
+            frequency={frequency}
+          />
+        </Col>
+        <Col xs={24} md={12}>
+          <ComparisonGraph
+            primaryNode={primaryNode}
+            comparisonNodes={comparisonNodes}
+            series="no2"
+            dateRange={dateRange}
+            frequency={frequency}
+          />
+        </Col>
+      </Row>
     </div>
   );
 }

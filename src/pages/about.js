@@ -12,8 +12,23 @@ function About() {
           <h2>What is Air Aware?</h2>
 
           <p>
-            Air Aware is a project set up by Sacha Manson-Smith and Louise
-            Thomas to look at data from the{" "}
+            Air Aware is a project set up by{" "}
+            <a
+              href="https://www.linkedin.com/in/smansonsmith/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Sacha Manson-Smith
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://www.linkedin.com/in/louise-thomas-3a687344/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Louise Thomas
+            </a>{" "}
+            to look at data from the{" "}
             <a
               href="https://www.breathelondon.org/"
               target="_blank"

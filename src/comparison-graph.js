@@ -3,15 +3,20 @@ import "./comparison-graph.css";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { Skeleton } from "antd";
 import axios from "axios";
-import { Loader } from "rsuite";
 
+import { DotChartOutlined } from "@ant-design/icons";
 import * as Plot from "@observablehq/plot";
 
 import { comparisonNodeColour, primaryNodeColour } from "./mapStyle";
 import { getSeriesName } from "./utils";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
+
+function delay(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
 
 function ComparisonGraph(props) {
   const { primaryNode, comparisonNodes, series, dateRange, frequency } = props;
@@ -36,6 +41,8 @@ function ComparisonGraph(props) {
             }`
           ),
         ]);
+
+        await delay(1000);
 
         const data = primaryData.data.map((d) => ({
           time: new Date(d.time),
@@ -95,7 +102,7 @@ function ComparisonGraph(props) {
   }, [comparisonNodes, series, startDate, endDate, frequency]);
 
   useEffect(() => {
-    if (!primaryNode || !comparisonNodes) {
+    if (!primaryNode || !comparisonNodes || !containerRef.current) {
       return;
     }
     const data = primaryData.concat(comparisonData);
@@ -211,8 +218,21 @@ function ComparisonGraph(props) {
 
   return (
     <div>
-      <div className="comparison-graph" ref={containerRef} />
-      {isLoading && <Loader size="md" center />}
+      {!isLoading && <div className="comparison-graph" ref={containerRef} />}
+      {isLoading && (
+        <Skeleton.Node
+          active={true}
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            width: "100%",
+            height: "300px",
+          }}
+        >
+          <DotChartOutlined style={{ fontSize: 40, color: "#bfbfbf" }} />
+        </Skeleton.Node>
+      )}
     </div>
   );
 }
