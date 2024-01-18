@@ -1,7 +1,8 @@
-import React from "react";
-import { Descriptions } from "antd";
 import "./node-panel.css";
-import { Col, Row } from "antd";
+
+import React from "react";
+
+import { Col, Descriptions, Row } from "antd";
 import { useParams } from "react-router-dom";
 
 function NodePanel({ sites }) {
@@ -30,9 +31,9 @@ function NodePanel({ sites }) {
           {" "}
           <img src={selectedNode?.photo_url} />
         </Col>
-        <Col xs={12} sm={12}>
+        <Col xs={24} sm={12}>
           <Descriptions
-            column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 }}
+            column={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2, xxl: 2 }}
             bordered
             items={description}
           />
