@@ -8,15 +8,30 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.logo {
+  background-color: white;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+.nav-link:link { 
+  text-decoration: none; 
+} 
+.nav-link:visited { 
+  text-decoration: none; 
+} 
+.nav-link:hover { 
+  text-decoration: none; 
+} 
+.nav-link:active { 
+  text-decoration: none; 
 }
 
 .App-header {

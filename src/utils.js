@@ -1,4 +1,4 @@
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 
 export const getSeriesName = (series) => {
   const seriesMap = { pm25: "PM2.5", no2: "NO2" };
@@ -55,4 +55,9 @@ export const thresholds = {
 
 export const formatMonthYear = (d) => {
   return format(d, "MMM yy");
+};
+
+export const nullGeoJson = {
+  type: "FeatureCollection",
+  features: [],
 };

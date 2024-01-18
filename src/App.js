@@ -1,77 +1,304 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import DataMap from "./datamap";
-import Wrapped from "./wrapped";
+
+import React, { useEffect, useState } from "react";
+
+import { Layout, Menu, theme } from "antd";
+import axios from "axios";
+import set from "date-fns/set";
+import subDays from "date-fns/subDays";
+import subMonths from "date-fns/subMonths";
+import {
+  matchRoutes,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import logo from "./img/logo-menu.png";
 import NoMatch from "./no-match";
-import { useState, useEffect } from "react";
-import { Button, Modal } from "rsuite";
+import About from "./pages/about";
+import ComparePanel from "./pages/compare-panel";
+import DataSources from "./pages/data-sources";
+import DataMap from "./pages/datamap";
+import NodePanel from "./pages/node-panel";
+import ReportPanel from "./pages/report-panel";
+import PathConstants from "./routes/pathConstants";
+import { nullGeoJson } from "./utils";
+import WrappedDrawer from "./wrapped-drawer";
+
+const { Header, Content, Sider } = Layout;
+const serverUrl = process.env.REACT_APP_SERVER_URL;
 
 function App() {
-  const [modalOpen, setModalOpen] = useState(true);
-  const [showWrapped, setShowWrapped] = useState(true);
+  const location = useLocation();
+
+  const {
+    token: { borderRadius },
+  } = theme.useToken();
+
+  const navigate = useNavigate();
+  const [selectedSiteCode, setSelectedSiteCode] = useState(undefined);
+  const [selectedMainMenuKeys, setSelectedMainMenuKeys] = useState(["nodeMap"]);
+  const [selectedTopMenuKeys, setSelectedTopMenuKeys] = useState([]);
+
+  const defaultEndDate = set(new Date(), {
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+
+  const startDate = subMonths(defaultEndDate, 1);
+
+  const [dateRange, setDateRange] = useState([
+    subDays(defaultEndDate, 30),
+    defaultEndDate,
+  ]);
+
+  const onDateChange = (dateRange) => {
+    setDateRange(dateRange);
+  };
+
+  const [data, setData] = useState({
+    sites: [],
+    siteAverageNO2: undefined,
+    siteAveragePM25: undefined,
+    ltnData: nullGeoJson,
+    boroughData: nullGeoJson,
+  });
+
+  const mainMenuItems = [
+    { key: PathConstants.NODE_MAP, label: "Node map" },
+    {
+      key: PathConstants.DATA_SOURCES,
+      label: "Data sources",
+    },
+    { key: PathConstants.ABOUT, label: "About" },
+  ];
+
+  const topMenuItems = [
+    { key: PathConstants.NODE_DETAIL, label: "Detail" },
+    { key: PathConstants.NODE_COMPARE, label: "Compare" },
+    { key: PathConstants.NODE_REPORT, label: "Report" },
+    {
+      key: PathConstants.NODE_WRAPPED,
+      label: "Wrapped 2023",
+    },
+  ];
 
   useEffect(() => {
-    document.body.classList.add("bg-image-welcome");
+    const loadSiteData = async () => {
+      try {
+        console.log("Fetching site data from the server");
+
+        // Load all the data asynchronously and wait for the result
+        const [
+          sitesResponse,
+          siteAveragePM25Response,
+          siteAverageNO2Response,
+          ltnDataResponse,
+          boroughDataResponse,
+        ] = await Promise.all([
+          axios.get(`${serverUrl}/sites`),
+          axios.get(
+            `${serverUrl}/site_average/pm25/${startDate.toISOString()}/${defaultEndDate.toISOString()}`
+          ),
+          axios.get(
+            `${serverUrl}/site_average/no2/${startDate.toISOString()}/${defaultEndDate.toISOString()}`
+          ),
+          axios.get(`${serverUrl}/geometry/ltns`),
+          axios.get(`${serverUrl}/geometry/boroughs`),
+        ]);
+
+        setData({
+          sites: sitesResponse.data,
+          siteAverageNO2: siteAverageNO2Response.data,
+          siteAveragePM25: siteAveragePM25Response.data,
+          ltnData: ltnDataResponse.data,
+          boroughData: boroughDataResponse.data,
+        });
+      } catch (error) {
+        console.error("Error fetching site data:", error);
+      }
+    };
+
+    loadSiteData();
   }, []);
 
-  const handleShowWrapped = () => {
-    setModalOpen(false);
-    setShowWrapped(true);
-    document.body.classList.remove("bg-image-welcome");
+  useEffect(() => {
+    console.log("Locaion is ", location);
+
+    // Set the menu based on route
+    const routes = Object.values(PathConstants).map((item) => ({
+      path: item,
+    }));
+
+    // Get the base route - this should then match either a top menu or main menu route
+    const matches = matchRoutes(routes, location);
+
+    if (matches.length === 0) {
+      console.log("Didn't match any routes - returning");
+      setSelectedSiteCode(undefined);
+      return;
+    }
+
+    console.log("Matches", matches);
+    console.log("Setting selected node to ", matches[0].params.siteCode);
+    setSelectedSiteCode(matches[0].params.siteCode);
+
+    const topItem = topMenuItems.find(
+      (item) => item.key === matches[0].route.path
+    );
+
+    if (topItem) {
+      console.log("Setting top menu to ", matches[0].route.path);
+      setSelectedTopMenuKeys(matches[0].route.path);
+    } else {
+      console.log("Setting top menu to null");
+      setSelectedTopMenuKeys([]);
+    }
+
+    const mainItem = mainMenuItems.find(
+      (item) => item.key === matches[0].route.path
+    );
+
+    if (mainItem) {
+      console.log("Setting main menu to ", matches[0].route.path);
+      setSelectedMainMenuKeys(matches[0].route.path);
+    } else {
+      console.log("Setting main menu to null");
+      setSelectedMainMenuKeys([]);
+    }
+
+    console.log("Routes", routes);
+  }, [location]);
+
+  const onMapNodeSelected = (node) => {
+    console.log("Selected ", node);
+    navigate(
+      topMenuItems
+        .find((item) => item.key === PathConstants.NODE_DETAIL)
+        .key.replace(":siteCode", node.site_code)
+    );
   };
-  const handleShowDatamap = () => {
-    setModalOpen(false);
-    setShowWrapped(false);
-    document.body.classList.remove("bg-image-welcome");
+  const onTopMenuSelected = (item) => {
+    console.log("Top menu selected ", item, selectedSiteCode);
+    navigate(item.key.replace(":siteCode", selectedSiteCode));
   };
 
-  // <Routes>
-  //   <Route path="/" element={<DataMap />} />
-  //   <Route path="/wrapped" element={<Wrapped year={2023} />} />
-  //   <Route path="*" element={<NoMatch />} />
-  // </Routes>
+  const onMainMenuSelected = (item) => {
+    navigate(item.key);
+    console.log("Main menu selected ", item);
+  };
+
+  const onWrappedClose = () => {
+    const path = topMenuItems
+      .find((item) => item.key === PathConstants.NODE_DETAIL)
+      .key.replace(":siteCode", selectedSiteCode);
+
+    console.log("Navigating to ", path);
+    navigate(path);
+  };
 
   return (
-    <div>
-      <Modal open={modalOpen} onClose={handleShowDatamap}>
-        <Modal.Header>
-          <Modal.Title style={{ textAlign: "center" }}>
-            🎁🎁🎁 Air Aware Wrapped 🎁🎁🎁
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            A little gift from Air Aware this Christmas! Unwrap your treasure
-            trove of air quality information for where you live.
-          </p>
-          <p>
-            Air pollution is the biggest environmental threat to our health.
-            Tackling it will make us happier and healthier. What a Christmas
-            gift to give.
-          </p>
-          <p>
-            Pass on to all your London friends! The more people who know about
-            air pollution, the more equipped we are to address it!
-          </p>
-          <p>
-            Search for a monitoring station near you then click on it to see
-            your report.
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={handleShowDatamap}>
-            No thanks, go to the normal map
-          </Button>
-          <Button onClick={handleShowWrapped} appearance="primary">
-            Show me Wrapped!
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {showWrapped && !modalOpen && <Wrapped year={2023} />}
-      {!showWrapped && !modalOpen && <DataMap />}
-    </div>
+    <Layout>
+      <Sider
+        breakpoint="lg"
+        collapsedWidth="0"
+        onBreakpoint={(broken) => {
+          console.log(broken);
+        }}
+        onCollapse={(collapsed, type) => {
+          console.log(collapsed, type);
+        }}
+      >
+        <img src={logo} className="logo" alt="Air Aware logo" />
+        <Menu
+          mode="inline"
+          items={mainMenuItems}
+          onSelect={onMainMenuSelected}
+          selectedKeys={selectedMainMenuKeys}
+        />
+      </Sider>
+      <Layout>
+        <Header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 10,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {selectedTopMenuKeys.length > 0 && (
+            <Menu
+              mode="horizontal"
+              items={topMenuItems}
+              style={{ flex: 1, minWidth: 0 }}
+              onSelect={onTopMenuSelected}
+              selectedKeys={selectedTopMenuKeys}
+            />
+          )}
+        </Header>
+        <Content style={{ margin: "16px 16px 0", borderRadius: borderRadius }}>
+          <Routes>
+            <Route
+              path={PathConstants.NODE_MAP}
+              element={
+                <DataMap
+                  sites={data.sites}
+                  siteAverageNO2={data.siteAverageNO2}
+                  siteAveragePM25={data.siteAveragePM25}
+                  ltnData={data.ltnData}
+                  boroughData={data.boroughData}
+                  onNodeSelected={onMapNodeSelected}
+                />
+              }
+            />
+            <Route
+              path={PathConstants.NODE_DETAIL}
+              element={<NodePanel sites={data.sites} />}
+            />
+            <Route
+              path={PathConstants.NODE_COMPARE}
+              element={
+                <ComparePanel
+                  sites={data.sites}
+                  dateRange={dateRange}
+                  onDateChange={onDateChange}
+                />
+              }
+            />
+            <Route
+              path={PathConstants.NODE_REPORT}
+              element={
+                <ReportPanel
+                  sites={data.sites}
+                  dateRange={dateRange}
+                  onDateChange={onDateChange}
+                />
+              }
+            />
+            <Route
+              path={PathConstants.NODE_WRAPPED}
+              element={<WrappedDrawer year={2023} onClose={onWrappedClose} />}
+            />
+            <Route
+              path={PathConstants.DATA_SOURCES}
+              element={<DataSources />}
+            />
+            <Route path={PathConstants.ABOUT} element={<About />} />
+            <Route path="*" element={<NoMatch />} />
+          </Routes>
+        </Content>
+      </Layout>
+    </Layout>
   );
 }
+
+// {showWrapped && !modalOpen && <Wrapped year={2023} />}
+// {!showWrapped && !modalOpen && <DataMap />}
 
 export default App;

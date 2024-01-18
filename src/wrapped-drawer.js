@@ -1,13 +1,19 @@
-import React, { useState } from "react";
-import WrappedPresentation from "./wrapped-presentation";
-import { Drawer } from "rsuite";
-import { useMediaQuery } from "./hooks";
-
 import "./wrapped-drawer.css";
+
+import React from "react";
+
+import { useParams } from "react-router-dom";
+import { Drawer } from "rsuite";
+
+import { useMediaQuery } from "./hooks";
 import DesktopImage from "./img/wrapped-desktop.png";
 import MobileImage from "./img/wrapped-mobile.png";
+import WrappedPresentation from "./wrapped-presentation";
+import wrappedData from "./wrapped_2023.json";
 
-function WrappedDrawer({ selectedNode, year, onClose }) {
+function WrappedDrawer({ year, onClose }) {
+  const params = useParams();
+
   const isMobile = useMediaQuery("(max-width: 767px)");
   const styles = {
     container: (isMobile) => ({
@@ -17,13 +23,14 @@ function WrappedDrawer({ selectedNode, year, onClose }) {
     }),
   };
 
+  const nodeData = wrappedData.find(
+    (node) => node.details.site_code === params.siteCode
+  );
+
   return (
-    <Drawer size="full" backdrop={true} open={!!selectedNode} onClose={onClose}>
+    <Drawer size="full" backdrop={true} open={true} onClose={onClose}>
       <Drawer.Body style={styles.container(isMobile)}>
-        <WrappedPresentation
-          data={selectedNode}
-          year={year}
-        ></WrappedPresentation>
+        <WrappedPresentation data={nodeData} year={year}></WrappedPresentation>
       </Drawer.Body>
     </Drawer>
   );

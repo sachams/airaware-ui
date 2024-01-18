@@ -1,45 +1,23 @@
-import Map, {
-  Source,
-  Layer,
-  NavigationControl,
-  FullscreenControl,
-  GeolocateControl,
-  Popup,
-} from "react-map-gl";
-import React, {
-  useRef,
-  useEffect,
-  useCallback,
-  useState,
-  useMemo,
-} from "react";
-import ControlPanel from "./control-panel";
+import "./datamap.css";
+
+import React, { useEffect, useRef, useState } from "react";
+
+import { Spin } from "antd";
+import Map, { Layer, NavigationControl, Source } from "react-map-gl";
+
+import ControlPanel from "../control-panel";
+import GeocoderControl from "../geocoder-control";
+import LtnPopup from "../ltn-popup";
 import {
-  ltnFillDataLayer,
-  ltnOutlineDataLayer,
   boroughFillDataLayer,
   boroughOutlineDataLayer,
-  pm25Layer,
+  ltnFillDataLayer,
+  ltnOutlineDataLayer,
   no2Layer,
-  selectedNodeLayer,
-} from "./mapStyle";
-import GeocoderControl from "./geocoder-control";
-import LtnPopup from "./ltn-popup";
-import NodePopup from "./node-popup";
-import SidePanel from "./side-panel";
-import AboutDrawer from "./about-drawer";
-import { Loader } from "rsuite";
-import axios from "axios";
-
-import subMonths from "date-fns/subMonths";
-import set from "date-fns/set";
-
-const serverUrl = process.env.REACT_APP_SERVER_URL;
-
-const nullGeoJson = {
-  type: "FeatureCollection",
-  features: [],
-};
+  pm25Layer,
+} from "../mapStyle";
+import NodePopup from "../node-popup";
+import { nullGeoJson } from "../utils";
 
 function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
   // Generate a map of pm25 averages from a list of dicts
@@ -73,64 +51,40 @@ function getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2) {
   return featureCollection;
 }
 
-function DataMap() {
+function DataMap({
+  onNodeSelected,
+  sites,
+  ltnData,
+  boroughData,
+  siteAverageNO2,
+  siteAveragePM25,
+}) {
   const mapRef = useRef();
 
-  const endDate = set(new Date(), {
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0,
-  });
-
-  const startDate = subMonths(endDate, 1);
-
-  const [data, setData] = useState({
-    siteData: nullGeoJson,
-    ltnData: nullGeoJson,
-    boroughData: nullGeoJson,
-  });
+  const [siteData, setSiteData] = useState(nullGeoJson);
 
   // Thanks https://stackoverflow.com/a/44185591
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log("Fetching data from server");
-
-        // Load all the data asynchronously and wait for the result
-        const [sites, siteAveragePM25, siteAverageNO2, ltnData, boroughData] =
-          await Promise.all([
-            axios.get(`${serverUrl}/sites`),
-            axios.get(
-              `${serverUrl}/site_average/pm25/${startDate.toISOString()}/${endDate.toISOString()}`
-            ),
-            axios.get(
-              `${serverUrl}/site_average/no2/${startDate.toISOString()}/${endDate.toISOString()}`
-            ),
-            axios.get(`${serverUrl}/geometry/ltns`),
-            axios.get(`${serverUrl}/geometry/boroughs`),
-          ]);
+        if (!sites || !siteAverageNO2 || !siteAveragePM25) {
+          console.log("One or more input data null");
+          return;
+        }
+        console.log("All input data ok");
 
         // Generate site geojson, enriched with pm25 and no2 averages
-        const siteData = getSiteGeoJson(
-          sites.data,
-          siteAveragePM25.data,
-          siteAverageNO2.data
-        );
+        const siteData = getSiteGeoJson(sites, siteAveragePM25, siteAverageNO2);
 
-        setData({
-          siteData: siteData,
-          ltnData: ltnData.data,
-          boroughData: boroughData.data,
-        });
+        setSiteData(siteData);
       } catch (error) {
-        console.error("Error fetching site data:", error);
+        console.error("Error fetching datamap data:", error);
       }
     };
 
     loadData();
-  }, []);
+  }, [sites]);
 
   const adjustCoordinates = (event, coordinates) => {
     // Ensure that if the map is zoomed out such that multiple
@@ -158,18 +112,9 @@ function DataMap() {
 
   const [features, setFeatures] = useState([]);
   const [forwardGeocoderFunc, setForwardGeocoderFunc] = useState(undefined);
-  const [aboutDrawerOpen, setAboutDrawerOpen] = useState(false);
 
   const [series, setSeries] = useState("pm25");
   const [hoverInfo, setHoverInfo] = useState(null);
-  const [selectedFeature, setSelectedFeature] = useState(null);
-  const selectedSiteCode = selectedFeature
-    ? selectedFeature.properties.site_code
-    : "";
-  const selectedNodeFilter = useMemo(
-    () => ["in", "site_code", selectedSiteCode],
-    [selectedSiteCode]
-  );
 
   const featureData = [
     { label: "LTNs", value: "ltn" },
@@ -181,16 +126,12 @@ function DataMap() {
   };
   const interactiveLayerIds = ["ltn_areas_fill", "no2Layer", "pm25Layer"];
 
-  const onLogoClick = () => {
-    setAboutDrawerOpen(true);
+  // If the mouse leaves the canvas, remove the popover
+  const onMouseOut = (event) => {
+    setHoverInfo(null);
   };
 
-  // If the mouse leaves the canvas, remove the popover
-  const onMouseOut = useCallback((event) => {
-    setHoverInfo(null);
-  });
-
-  const onMouseMove = useCallback((event) => {
+  const onMouseMove = (event) => {
     if (event.features.length === 0) {
       setHoverInfo(null);
       return;
@@ -209,6 +150,8 @@ function DataMap() {
       case "pm25Layer":
         coordinates = getNodeLayerCoordinates(event);
         break;
+      default:
+        break;
     }
 
     if (coordinates) {
@@ -219,48 +162,22 @@ function DataMap() {
         layerId: event?.features[0].layer.id,
       });
     }
-  });
-
-  const setFeatureState = (selectedFeature, isSelected) => {
-    if (selectedFeature) {
-      mapRef.current.setFeatureState(
-        { source: "nodes", id: selectedFeature.id },
-        { selected: isSelected }
-      );
-    }
   };
-  const onSidePanelClose = useCallback(() => {
-    setFeatureState(selectedFeature, false);
-    setSelectedFeature(null);
-  });
 
-  const onClick = useCallback((event) => {
+  const onClick = (event) => {
     if (event.features.length === 0) {
-      setFeatureState(selectedFeature, false);
-      setSelectedFeature(null);
       return;
     }
 
     switch (event.features[0].layer.id) {
       case "no2Layer":
       case "pm25Layer":
-        // If the node is the one that is selected, unselect it
-        if (selectedFeature?.id === event.features[0].id) {
-          setFeatureState(selectedFeature, false);
-          setSelectedFeature(null);
-        } else {
-          setFeatureState(selectedFeature, false);
-          setFeatureState(event.features[0], true);
-          setSelectedFeature(event.features[0]);
-        }
+        onNodeSelected(event.features[0].properties);
         break;
-
       default:
-        setFeatureState(selectedFeature, false);
-        setSelectedFeature(null);
         break;
     }
-  });
+  };
 
   const updateSeries = (value) => {
     console.log("Setting series to ", value);
@@ -278,13 +195,13 @@ function DataMap() {
 
   useEffect(() => {
     const forwardGeocoder = (query) => {
-      if (query === undefined || query.length == 0) {
+      if (query === undefined || query.length === 0) {
         return [];
       }
       var matchingFeatures = [];
 
       // Find matching nodes
-      data.siteData.features.forEach((feature) => {
+      siteData?.features.forEach((feature) => {
         // Handle queries with different capitalization
         // than the source data by calling toLowerCase().
         if (
@@ -301,7 +218,7 @@ function DataMap() {
       });
 
       // Find matching LTNs
-      data.ltnData.features.forEach((feature) => {
+      ltnData.features.forEach((feature) => {
         // Handle queries with different capitalization
         // than the source data by calling toLowerCase().
         if (
@@ -319,26 +236,27 @@ function DataMap() {
 
     // Only set the forwardGeocoderFunc once we have data, as we can only set this once
     // on the Geocoder component
-    if (data.siteData.features.length > 0) {
+    if (siteData?.features.length > 0) {
       setForwardGeocoderFunc(() => forwardGeocoder);
     }
-  }, [data.siteData, data.ltnData]);
+  }, [siteData, ltnData]);
 
   return (
-    <>
+    <div className="datamap">
       <Map
         mapLib={import("mapbox-gl")}
         ref={mapRef}
         onMouseMove={onMouseMove}
         onMouseOut={onMouseOut}
         onClick={onClick}
+        onRender={(event) => event.target.resize()}
         interactiveLayerIds={interactiveLayerIds}
         initialViewState={{
           latitude: 51.5099903,
           longitude: -0.1304413,
           zoom: 10,
         }}
-        style={{ height: "100vh", width: "100vw" }}
+        style={{ borderRadius: "2px" }}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
@@ -355,10 +273,10 @@ function DataMap() {
             }}
           />
         )}
-        /* Only create the NavigationControl once forwardGeocoderFunc has been
-        set, otherwise the order on the page will be wrong */
+        {/* Only create the NavigationControl once forwardGeocoderFunc has been
+        set, otherwise the order on the page will be wrong */}
         {forwardGeocoderFunc && <NavigationControl position="bottom-right" />}
-        <Source type="geojson" data={data.ltnData} generateId={true}>
+        <Source type="geojson" data={ltnData} generateId={true}>
           <Layer
             {...ltnFillDataLayer}
             layout={{
@@ -372,7 +290,7 @@ function DataMap() {
             }}
           />
         </Source>
-        <Source type="geojson" data={data.boroughData} generateId={true}>
+        <Source type="geojson" data={boroughData} generateId={true}>
           <Layer
             {...boroughFillDataLayer}
             layout={{
@@ -401,12 +319,7 @@ function DataMap() {
             properties={hoverInfo.properties}
           />
         )}
-        <Source
-          id="nodes"
-          type="geojson"
-          data={data.siteData}
-          generateId={true}
-        >
+        <Source id="nodes" type="geojson" data={siteData} generateId={true}>
           <Layer
             {...pm25Layer}
             layout={{ visibility: series === "pm25" ? "visible" : "none" }}
@@ -423,23 +336,9 @@ function DataMap() {
           seriesValue={series}
           featureValue={features}
         />
-        <SidePanel
-          siteData={data.siteData}
-          onClose={onSidePanelClose}
-          selectedNode={selectedFeature?.properties}
-        />
-        <AboutDrawer
-          isOpen={aboutDrawerOpen}
-          setAboutDrawerOpen={setAboutDrawerOpen}
-        />
-        <img
-          src="/logo-small-transparent.png"
-          className="logo"
-          onClick={() => setAboutDrawerOpen(true)}
-        />
       </Map>
-      {data.siteData.features.length == 0 && <Loader size="lg" center />}
-    </>
+      {siteData?.features.length === 0 && <Spin size="large" fullscreen />}
+    </div>
   );
 }
 

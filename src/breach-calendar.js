@@ -1,11 +1,15 @@
-import axios from "axios";
-import * as React from "react";
-import * as Plot from "@observablehq/plot";
-import { useEffect, useRef, useState } from "react";
 import "./breach-calendar.css";
-import { Loader } from "rsuite";
+
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+
+import axios from "axios";
 import { format, set } from "date-fns";
-import { getSeriesName, formatMonthYear } from "./utils";
+import { Loader } from "rsuite";
+
+import * as Plot from "@observablehq/plot";
+
+import { formatMonthYear, getSeriesName } from "./utils";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
@@ -50,7 +54,7 @@ function BreachCalendar(props) {
   }, [primaryNode, series, startDate, endDate, threshold]);
 
   useEffect(() => {
-    if (primaryData.length == 0) return;
+    if (primaryData.length === 0) return;
 
     const plot = Plot.plot({
       style: {
