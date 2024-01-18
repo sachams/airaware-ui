@@ -46,6 +46,3 @@ FROM base
 FROM nginx:1.19 as release
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
-
-# # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
