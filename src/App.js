@@ -5,8 +5,8 @@ import React, { useEffect, useState } from "react";
 import { Layout, Menu, theme } from "antd";
 import axios from "axios";
 import set from "date-fns/set";
-import subDays from "date-fns/subDays";
 import subMonths from "date-fns/subMonths";
+import qs from "qs";
 import {
   matchRoutes,
   Route,
@@ -51,15 +51,6 @@ function App() {
 
   const startDate = subMonths(defaultEndDate, 1);
 
-  const [dateRange, setDateRange] = useState([
-    subDays(defaultEndDate, 30),
-    defaultEndDate,
-  ]);
-
-  const onDateChange = (dateRange) => {
-    setDateRange(dateRange);
-  };
-
   const [data, setData] = useState({
     sites: [],
     siteAverageNO2: undefined,
@@ -77,13 +68,25 @@ function App() {
     { key: PathConstants.ABOUT, label: "About" },
   ];
 
+  // A list of top menu items. When the route changes, any search params in
+  // params are carried over from one route to the next. we do this
+  // to (eg) maintain a common date range between pages
   const topMenuItems = [
-    { key: PathConstants.NODE_DETAIL, label: "Detail" },
-    { key: PathConstants.NODE_COMPARE, label: "Compare" },
-    { key: PathConstants.NODE_REPORT, label: "Report" },
+    { key: PathConstants.NODE_DETAIL, label: "Detail", params: [] },
+    {
+      key: PathConstants.NODE_COMPARE,
+      label: "Compare",
+      params: ["startDate", "endDate"],
+    },
+    {
+      key: PathConstants.NODE_REPORT,
+      label: "Report",
+      params: ["startDate", "endDate"],
+    },
     {
       key: PathConstants.NODE_WRAPPED,
       label: "Wrapped 2023",
+      params: [],
     },
   ];
 
@@ -182,9 +185,35 @@ function App() {
         .key.replace(":siteCode", node.site_code)
     );
   };
+
+  // A top menu item has been selected. We want to carry over some search params
+  // (eg, startDate and endDate) between pages, so extract and re-set them here.
   const onTopMenuSelected = (item) => {
-    console.log("Top menu selected ", item, selectedSiteCode);
-    navigate(item.key.replace(":siteCode", selectedSiteCode));
+    // Find the item in our original list of top menu items, so we can get the list
+    // of params
+    const originalItem = topMenuItems.find(
+      (originalItem) => originalItem.key === item.key
+    );
+
+    const existingQueries = qs.parse(location.search, {
+      ignoreQueryPrefix: true,
+    });
+
+    let newQueries = {};
+
+    originalItem.params.forEach((query) => {
+      if (existingQueries[query]) {
+        newQueries = { ...newQueries, [query]: existingQueries[query] };
+      }
+    });
+
+    const queryString = qs.stringify(newQueries, { skipNulls: true });
+
+    const targetPath = `${item.key.replace(
+      ":siteCode",
+      selectedSiteCode
+    )}?${queryString}`;
+    navigate(targetPath);
   };
 
   const onMainMenuSelected = (item) => {
@@ -263,23 +292,11 @@ function App() {
             />
             <Route
               path={PathConstants.NODE_COMPARE}
-              element={
-                <ComparePanel
-                  sites={data.sites}
-                  dateRange={dateRange}
-                  onDateChange={onDateChange}
-                />
-              }
+              element={<ComparePanel sites={data.sites} />}
             />
             <Route
               path={PathConstants.NODE_REPORT}
-              element={
-                <ReportPanel
-                  sites={data.sites}
-                  dateRange={dateRange}
-                  onDateChange={onDateChange}
-                />
-              }
+              element={<ReportPanel sites={data.sites} />}
             />
             <Route
               path={PathConstants.NODE_WRAPPED}

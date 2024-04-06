@@ -74,10 +74,10 @@ function ComparisonGraph(props) {
         const [comparisonData] = await Promise.all([
           axios.get(
             `${serverUrl}/sensor/${series}/${startDate.toISOString()}/${endDate.toISOString()}/${frequency}?${comparisonNodes
-              .filter((node) => {
-                return node.site_code !== primaryNode.site_code;
+              .filter((site_code) => {
+                return site_code !== primaryNode.site_code;
               })
-              .map((node) => "codes=" + node.site_code)
+              .map((site_code) => "codes=" + site_code)
               .join("&")}`
           ),
         ]);
@@ -94,7 +94,7 @@ function ComparisonGraph(props) {
       }
     };
 
-    if (comparisonNodes.length > 0) {
+    if (comparisonNodes.length > 0 && primaryNode) {
       loadData();
     } else {
       setComparisonData([]);

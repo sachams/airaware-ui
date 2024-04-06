@@ -1,9 +1,12 @@
 import "./compare-panel.css";
 
-import React, { useState } from "react";
+import React from "react";
 
 import { Col, Row } from "antd";
+import set from "date-fns/set";
+import subMonths from "date-fns/subMonths";
 import { useParams } from "react-router-dom";
+import { useQueryState } from "react-router-use-location-state";
 import { CheckTreePicker, Radio, RadioGroup, Tooltip, Whisper } from "rsuite";
 
 import { Block, InfoOutline } from "@rsuite/icons";
@@ -24,17 +27,36 @@ const styles = {
   },
 };
 
-function ComparePanel({ sites, dateRange, onDateChange }) {
+function ComparePanel({ sites }) {
   const params = useParams();
+
   const primaryNode = sites.find((node) => node.site_code === params.siteCode);
 
-  const [frequency, setFrequency] = useState("hour");
-  const [comparisonNodes, setComparisonNodes] = useState([]);
+  const [frequency, setFrequency] = useQueryState("frequency", "hour");
+  const [comparisonNodes, setComparisonNodes] = useQueryState("compare", []);
+
+  const defaultEndDate = set(new Date(), {
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+
+  const [startDate, setStartDate] = useQueryState(
+    "startDate",
+    subMonths(defaultEndDate, 1)
+  );
+  const [endDate, setEndDate] = useQueryState("endDate", defaultEndDate);
 
   const nodeMap = sites.reduce(
     (map, obj) => ((map[obj.site_code] = obj), map),
     {}
   );
+
+  const onDateChange = (dateRange) => {
+    setStartDate(dateRange[0]);
+    setEndDate(dateRange[1]);
+  };
 
   const formatNodeType = (site_type) => {
     const capitalised = site_type[0].toUpperCase() + site_type.slice(1);
@@ -127,7 +149,8 @@ function ComparePanel({ sites, dateRange, onDateChange }) {
 
       console.log("ERROR: not sure what to do with ", d);
     });
-    setComparisonNodes(comparisonNodeArrays.flat());
+    const nodeArray = comparisonNodeArrays.flat().map((node) => node.site_code);
+    setComparisonNodes(nodeArray);
   };
 
   return (
@@ -137,7 +160,10 @@ function ComparePanel({ sites, dateRange, onDateChange }) {
           Date range
         </Col>
         <Col xs={24} md={12}>
-          <DateSelector dateRange={dateRange} onChange={onDateChange} />
+          <DateSelector
+            dateRange={[startDate, endDate]}
+            onChange={onDateChange}
+          />
         </Col>
       </Row>
       <Row style={{ paddingBottom: "5px" }}>
@@ -152,6 +178,7 @@ function ComparePanel({ sites, dateRange, onDateChange }) {
             onChange={onComparisonNodesChange}
             uncheckableItemValues={[primaryNode?.site_code, ...disabledItems]}
             disabledItemValues={[primaryNode?.site_code, ...disabledItems]}
+            value={comparisonNodes}
             data={nodeTypeTreeList}
             renderTreeNode={(nodeData) => {
               // console.log("PrimaryNode is ", primaryNode);
@@ -222,7 +249,7 @@ function ComparePanel({ sites, dateRange, onDateChange }) {
             primaryNode={primaryNode}
             comparisonNodes={comparisonNodes}
             series="pm25"
-            dateRange={dateRange}
+            dateRange={[startDate, endDate]}
             frequency={frequency}
           />
         </Col>
@@ -231,7 +258,7 @@ function ComparePanel({ sites, dateRange, onDateChange }) {
             primaryNode={primaryNode}
             comparisonNodes={comparisonNodes}
             series="no2"
-            dateRange={dateRange}
+            dateRange={[startDate, endDate]}
             frequency={frequency}
           />
         </Col>
