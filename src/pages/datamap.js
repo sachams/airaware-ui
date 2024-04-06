@@ -11,6 +11,10 @@ import LtnPopup from "../ltn-popup";
 import {
   boroughFillDataLayer,
   boroughOutlineDataLayer,
+  congestionFillDataLayer,
+  congestionOutlineDataLayer,
+  lezFillDataLayer,
+  lezOutlineDataLayer,
   ltnFillDataLayer,
   ltnOutlineDataLayer,
   no2Layer,
@@ -56,6 +60,8 @@ function DataMap({
   sites,
   ltnData,
   boroughData,
+  congestionData,
+  lezData,
   siteAverageNO2,
   siteAveragePM25,
 }) {
@@ -119,6 +125,8 @@ function DataMap({
   const featureData = [
     { label: "LTNs", value: "ltn" },
     { label: "Boroughs", value: "borough" },
+    { label: "LEZ", value: "lez" },
+    { label: "Congestion", value: "congestion" },
   ];
   const onFeaturesChange = (features) => {
     console.log("Features: ", features);
@@ -301,6 +309,34 @@ function DataMap({
             {...boroughOutlineDataLayer}
             layout={{
               visibility: features.includes("borough") ? "visible" : "none",
+            }}
+          />
+        </Source>
+        <Source type="geojson" data={congestionData} generateId={true}>
+          <Layer
+            {...congestionFillDataLayer}
+            layout={{
+              visibility: features.includes("congestion") ? "visible" : "none",
+            }}
+          />
+          <Layer
+            {...congestionOutlineDataLayer}
+            layout={{
+              visibility: features.includes("congestion") ? "visible" : "none",
+            }}
+          />
+        </Source>
+        <Source type="geojson" data={lezData} generateId={true}>
+          <Layer
+            {...lezFillDataLayer}
+            layout={{
+              visibility: features.includes("lez") ? "visible" : "none",
+            }}
+          />
+          <Layer
+            {...lezOutlineDataLayer}
+            layout={{
+              visibility: features.includes("lez") ? "visible" : "none",
             }}
           />
         </Source>

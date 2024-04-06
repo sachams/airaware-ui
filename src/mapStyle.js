@@ -47,6 +47,50 @@ export const boroughOutlineDataLayer = {
   },
 };
 
+export const congestionFillDataLayer = {
+  id: "congestion_fill",
+  type: "fill",
+  source: "congestion", // reference the data source
+  layout: {},
+  paint: {
+    "fill-color": "#E32636", // red color fill
+    "fill-opacity": 0.6,
+  },
+};
+
+export const congestionOutlineDataLayer = {
+  id: "congestion_outline",
+  type: "line",
+  source: "congestion",
+  layout: {},
+  paint: {
+    "line-color": "#777",
+    "line-width": 1,
+  },
+};
+
+export const lezFillDataLayer = {
+  id: "lez_fill",
+  type: "fill",
+  source: "lez", // reference the data source
+  layout: {},
+  paint: {
+    "fill-color": "#777777", // grey
+    "fill-opacity": 0.3,
+  },
+};
+
+export const lezOutlineDataLayer = {
+  id: "lez_outline",
+  type: "line",
+  source: "lez",
+  layout: {},
+  paint: {
+    "line-color": "#777",
+    "line-width": 1,
+  },
+};
+
 export const wrappedNodesLayer = {
   id: "wrappedNodesLayer",
   layout: {
