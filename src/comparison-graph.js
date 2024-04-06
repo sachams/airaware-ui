@@ -26,7 +26,7 @@ function ComparisonGraph(props) {
   const [comparisonData, setComparisonData] = useState([]);
   const [startDate, endDate] = dateRange;
   const [isLoading, setIsLoading] = useState(false);
-  const nodeSeriesName = primaryNode.name;
+  const nodeSeriesName = primaryNode?.name ?? "Node";
 
   useEffect(() => {
     const loadData = async () => {
