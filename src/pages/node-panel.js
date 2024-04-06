@@ -13,8 +13,22 @@ function NodePanel({ sites }) {
 
   const description = [
     { label: "Name", children: selectedNode?.name },
-    { label: "Site code", children: selectedNode?.site_code },
-    { label: "Status", children: selectedNode?.enabled_status },
+    {
+      label: "Breathe London link",
+      children: (
+        <a
+          href={`https://www.breathelondon.org/sensor-info?sitecode=${selectedNode?.site_code}&species=both`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {selectedNode?.site_code}
+        </a>
+      ),
+    },
+    {
+      label: "Status",
+      children: selectedNode?.is_enabled ? "Enabled" : "Disabled",
+    },
     { label: "Borough", children: selectedNode?.borough },
     { label: "Type", children: selectedNode?.site_type },
     {
@@ -27,11 +41,11 @@ function NodePanel({ sites }) {
   return (
     <>
       <Row>
-        <Col xs={24} sm={12}>
+        <Col xs={24} sm={8}>
           {" "}
           <img src={selectedNode?.photo_url} />
         </Col>
-        <Col xs={24} sm={12}>
+        <Col xs={24} sm={16}>
           <Descriptions
             column={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2, xxl: 2 }}
             bordered

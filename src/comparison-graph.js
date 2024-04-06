@@ -142,7 +142,7 @@ function ComparisonGraph(props) {
         ),
 
         Plot.text(
-          data.filter((d) => d.type === "Comparison"),
+          data.filter((d) => d.type === nodeSeriesName),
           Plot.pointerX({
             x: "time",
             frameAnchor: "top-left",
