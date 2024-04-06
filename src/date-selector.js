@@ -1,8 +1,10 @@
 import * as React from "react";
+
+import set from "date-fns/set";
 import subDays from "date-fns/subDays";
 import subYears from "date-fns/subYears";
-import set from "date-fns/set";
 import { DateRangePicker } from "rsuite";
+
 const { afterToday } = DateRangePicker;
 
 const defaultEndDate = set(new Date(), {
@@ -45,6 +47,7 @@ function DateSelector({ dateRange, onChange }) {
       cleanable={false}
       onChange={onChange}
       defaultValue={dateRange}
+      value={dateRange}
       size="sm"
       shouldDisableDate={afterToday()}
       style={{ width: "70%" }}
