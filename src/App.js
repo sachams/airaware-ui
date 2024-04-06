@@ -57,6 +57,8 @@ function App() {
     siteAveragePM25: undefined,
     ltnData: nullGeoJson,
     boroughData: nullGeoJson,
+    congestionData: nullGeoJson,
+    lezData: nullGeoJson,
   });
 
   const mainMenuItems = [
@@ -102,6 +104,8 @@ function App() {
           siteAverageNO2Response,
           ltnDataResponse,
           boroughDataResponse,
+          congestionDataResponse,
+          lezDataResponse,
         ] = await Promise.all([
           axios.get(`${serverUrl}/sites`),
           axios.get(
@@ -112,6 +116,8 @@ function App() {
           ),
           axios.get(`${serverUrl}/geometry/ltns`),
           axios.get(`${serverUrl}/geometry/boroughs`),
+          axios.get(`${serverUrl}/geometry/cc`),
+          axios.get(`${serverUrl}/geometry/lez`),
         ]);
 
         setData({
@@ -120,6 +126,8 @@ function App() {
           siteAveragePM25: siteAveragePM25Response.data,
           ltnData: ltnDataResponse.data,
           boroughData: boroughDataResponse.data,
+          congestionData: congestionDataResponse.data,
+          lezData: lezDataResponse.data,
         });
       } catch (error) {
         console.error("Error fetching site data:", error);
@@ -282,6 +290,8 @@ function App() {
                   siteAveragePM25={data.siteAveragePM25}
                   ltnData={data.ltnData}
                   boroughData={data.boroughData}
+                  congestionData={data.congestionData}
+                  lezData={data.lezData}
                   onNodeSelected={onMapNodeSelected}
                 />
               }
