@@ -26,6 +26,7 @@ function ComparisonGraph(props) {
   const [comparisonData, setComparisonData] = useState([]);
   const [startDate, endDate] = dateRange;
   const [isLoading, setIsLoading] = useState(false);
+  const nodeSeriesName = primaryNode.name;
 
   useEffect(() => {
     const loadData = async () => {
@@ -47,7 +48,7 @@ function ComparisonGraph(props) {
         const data = primaryData.data.map((d) => ({
           time: new Date(d.time),
           value: d.value,
-          type: "Node",
+          type: nodeSeriesName,
         }));
 
         setIsLoading(false);
@@ -112,7 +113,7 @@ function ComparisonGraph(props) {
     const plot = Plot.plot({
       color: {
         legend: true,
-        domain: ["Comparison", "Node"],
+        domain: ["Comparison", nodeSeriesName],
         range: [comparisonNodeColour, primaryNodeColour],
       },
       marginLeft: 60,
@@ -132,7 +133,7 @@ function ComparisonGraph(props) {
         Plot.ruleX(data, Plot.pointerX({ x: "time", stroke: "red" })),
 
         Plot.dot(
-          data.filter((d) => d.type === "Node"),
+          data.filter((d) => d.type === nodeSeriesName),
           Plot.pointerX({ x: "time", y: "value", stroke: "type" })
         ),
         Plot.dot(
@@ -148,18 +149,20 @@ function ComparisonGraph(props) {
             dx: 10,
             dy: 0,
             fontVariant: "tabular-nums",
+            fontSize: 12,
             text: (d) => `${d.time.toLocaleString()}`,
           })
         ),
         Plot.text(
-          data.filter((d) => d.type === "Node"),
+          data.filter((d) => d.type === nodeSeriesName),
           Plot.pointerX({
             x: "time",
             frameAnchor: "top-left",
             dx: 10,
-            dy: 20,
+            dy: 15,
             fontVariant: "tabular-nums",
-            text: (d) => `${d.type}: ${d.value.toFixed(2)}`,
+            fontSize: 12,
+            text: (d) => `Node: ${d.value.toFixed(1)}`,
           })
         ),
         Plot.text(
@@ -168,9 +171,10 @@ function ComparisonGraph(props) {
             x: "time",
             frameAnchor: "top-left",
             dx: 10,
-            dy: 40,
+            dy: 30,
             fontVariant: "tabular-nums",
-            text: (d) => `${d.type}: ${d.value.toFixed(2)}`,
+            fontSize: 12,
+            text: (d) => `Comparison: ${d.value.toFixed(1)}`,
           })
         ),
 
@@ -185,7 +189,7 @@ function ComparisonGraph(props) {
         }),
         // Add primary average line
         Plot.ruleY(
-          data.filter((d) => d.type === "Node"),
+          data.filter((d) => d.type === nodeSeriesName),
           Plot.groupZ(
             { y: "mean" },
             {
