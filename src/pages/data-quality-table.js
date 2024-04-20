@@ -8,20 +8,17 @@ import PathConstants from "../routes/pathConstants";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
-function DataQuality({ sites }) {
+function DataQualityTable({ sites, series }) {
   const [data, setData] = useState(undefined);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         console.log("Fetching outlier data from server");
-        setIsLoading(true);
 
         // Load all the data asynchronously and wait for the result
-        const [pm25Data, no2Data] = await Promise.all([
-          axios.get(`${serverUrl}/outlier/pm25`),
-          axios.get(`${serverUrl}/outlier/no2`),
+        const [serverData] = await Promise.all([
+          axios.get(`${serverUrl}/outlier/${series}`),
         ]);
 
         // Convert the array of sites into a dict, keyed by site_code
@@ -31,16 +28,13 @@ function DataQuality({ sites }) {
         }, {});
 
         // Enrich the outlier data with site name
-        pm25Data.data.forEach((element) => {
-          element.name = keyed_sites[element.site_code].name;
-        });
-        no2Data.data.forEach((element) => {
+        serverData.data.forEach((element) => {
           element.name = keyed_sites[element.site_code].name;
         });
 
         // Each site has a number of outlier data blocks. Flatten these into
         // individual rows
-        const pm25DataFlattened = pm25Data.data.reduce((acc, siteGroup) => {
+        const flattenedData = serverData.data.reduce((acc, siteGroup) => {
           siteGroup.outliers.forEach((outlier) => {
             const flattened = {
               site_code: siteGroup.site_code,
@@ -55,23 +49,7 @@ function DataQuality({ sites }) {
           return acc;
         }, []);
 
-        const no2DataFlattened = no2Data.data.reduce((acc, siteGroup) => {
-          siteGroup.outliers.forEach((outlier) => {
-            const flattened = {
-              site_code: siteGroup.site_code,
-              name: siteGroup.name,
-              outlier: outlier,
-              start: outlier.range.start.toString().split("T")[0],
-              end: outlier.range.end.toString().split("T")[0],
-              key: `${siteGroup.site_code}-${outlier.range.start}-${outlier.range.end}`,
-            };
-            acc.push(flattened);
-          });
-          return acc;
-        }, []);
-
-        setData({ pm25: pm25DataFlattened, no2: no2DataFlattened });
-        setIsLoading(false);
+        setData(flattenedData);
       } catch (error) {
         console.error("Error fetching outlier data:", error);
       }
@@ -111,7 +89,7 @@ function DataQuality({ sites }) {
       render: (text, record) => (
         <OutlierGraph
           data={record.outlier}
-          series={"pm25"}
+          series={series}
           siteCode={record.site_code}
           threshold={200}
         />
@@ -131,7 +109,7 @@ function DataQuality({ sites }) {
     },
   ];
 
-  return <>{data && <Table dataSource={data.pm25} columns={columns} />}</>;
+  return <>{data && <Table dataSource={data} columns={columns} />}</>;
 }
 
-export default React.memo(DataQuality);
+export default React.memo(DataQualityTable);
