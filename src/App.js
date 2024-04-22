@@ -19,6 +19,7 @@ import logo from "./img/logo-menu.png";
 import NoMatch from "./no-match";
 import About from "./pages/about";
 import ComparePanel from "./pages/compare-panel";
+import DataQualityPanel from "./pages/data-quality-panel";
 import DataSources from "./pages/data-sources";
 import DataMap from "./pages/datamap";
 import NodePanel from "./pages/node-panel";
@@ -66,6 +67,10 @@ function App() {
     {
       key: PathConstants.DATA_SOURCES,
       label: "Data sources",
+    },
+    {
+      key: PathConstants.DATA_QUALITY,
+      label: "Data quality",
     },
     { key: PathConstants.ABOUT, label: "About" },
   ];
@@ -315,6 +320,10 @@ function App() {
             <Route
               path={PathConstants.DATA_SOURCES}
               element={<DataSources />}
+            />
+            <Route
+              path={PathConstants.DATA_QUALITY}
+              element={<DataQualityPanel sites={data.sites} />}
             />
             <Route path={PathConstants.ABOUT} element={<About />} />
             <Route path="*" element={<NoMatch />} />

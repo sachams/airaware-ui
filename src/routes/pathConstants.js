@@ -6,6 +6,7 @@ const PathConstants = {
   NODE_REPORT: "/node/:siteCode/report",
   NODE_WRAPPED: "/node/:siteCode/wrapped/2023",
   DATA_SOURCES: "/datasources",
+  DATA_QUALITY: "/dataquality",
   ABOUT: "about",
 };
 
