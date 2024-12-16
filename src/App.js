@@ -91,7 +91,12 @@ function App() {
       params: ["startDate", "endDate"],
     },
     {
-      key: PathConstants.NODE_WRAPPED,
+      key: PathConstants.NODE_WRAPPED_2024,
+      label: "Wrapped 2024",
+      params: [],
+    },
+    {
+      key: PathConstants.NODE_WRAPPED_2023,
       label: "Wrapped 2023",
       params: [],
     },
@@ -314,7 +319,11 @@ function App() {
               element={<ReportPanel sites={data.sites} />}
             />
             <Route
-              path={PathConstants.NODE_WRAPPED}
+              path={PathConstants.NODE_WRAPPED_2024}
+              element={<WrappedDrawer year={2024} onClose={onWrappedClose} />}
+            />
+            <Route
+              path={PathConstants.NODE_WRAPPED_2023}
               element={<WrappedDrawer year={2023} onClose={onWrappedClose} />}
             />
             <Route
