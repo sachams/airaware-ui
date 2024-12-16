@@ -1,9 +1,11 @@
-import React from "react";
-import { useEffect, useState } from "react";
 import "./wrapped.css";
-import WrappedMap from "./wrapped-map";
+
+import React, { useEffect, useState } from "react";
+
 import WrappedDrawer from "./wrapped-drawer";
-import wrappedData from "./wrapped_2023.json";
+import WrappedMap from "./wrapped-map";
+import wrappedData2023 from "./wrapped_2023.json";
+import wrappedData2024 from "./wrapped_2024.json";
 
 function Wrapped({ year }) {
   const [data, setData] = useState(undefined);
@@ -17,8 +19,17 @@ function Wrapped({ year }) {
     //     wrappedData[0].heatmap.no2.push([hour, day, Math.random() * 20]);
     //   }
     // }
-    setData(wrappedData);
-  }, []);
+    switch (year) {
+      case 2023:
+        console.log("Loading wrapped 2023 data");
+        setData(wrappedData2023);
+        break;
+      case 2024:
+        console.log("Loading wrapped 2024 data");
+        setData(wrappedData2024);
+        break;
+    }
+  }, [year]);
 
   // const postcode = "SW2 1AW";
   // const distance = 5;
