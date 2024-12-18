@@ -15,6 +15,7 @@ import wrappedData2024 from "./wrapped_2024.json";
 function WrappedDrawer({ year, onClose }) {
   const params = useParams();
   const [nodeData, setNodeData] = useState(undefined);
+  const [numNodes, setNumNodes] = useState(undefined);
 
   const isMobile = useMediaQuery("(max-width: 767px)");
   const styles = {
@@ -34,6 +35,7 @@ function WrappedDrawer({ year, onClose }) {
             (node) => node.details.site_code === params.siteCode
           )
         );
+        setNumNodes(wrappedData2023.length);
         break;
       case 2024:
         console.log("Loading wrapped 2024 data");
@@ -42,6 +44,7 @@ function WrappedDrawer({ year, onClose }) {
             (node) => node.details.site_code === params.siteCode
           )
         );
+        setNumNodes(wrappedData2024.length);
         break;
     }
   }, [year]);
@@ -53,6 +56,7 @@ function WrappedDrawer({ year, onClose }) {
           <WrappedPresentation
             data={nodeData}
             year={year}
+            numNodes={numNodes}
           ></WrappedPresentation>
         </Drawer.Body>
       </Drawer>

@@ -1,14 +1,16 @@
-import * as React from "react";
-import { Col, Row } from "antd";
-import WrappedBreach from "./wrapped-breach";
-import WrappedHeatmap from "./wrapped-heatmap";
-import WrappedRanking from "./wrapped-ranking";
-import WrappedFinal from "./wrapped-final";
-import { useEffect } from "react";
-
 import "./wrapped-presentation.css";
 
-function WrappedPresentation({ data, distance, postcode, year }) {
+import * as React from "react";
+import { useEffect } from "react";
+
+import { Col, Row } from "antd";
+
+import WrappedBreach from "./wrapped-breach";
+import WrappedFinal from "./wrapped-final";
+import WrappedHeatmap from "./wrapped-heatmap";
+import WrappedRanking from "./wrapped-ranking";
+
+function WrappedPresentation({ data, distance, postcode, year, numNodes }) {
   useEffect(() => {
     document.body.classList.add("bg-image-wrapped");
 
@@ -37,10 +39,20 @@ function WrappedPresentation({ data, distance, postcode, year }) {
           </Row>
           <Row>
             <Col xs={24} md={12} xl={6}>
-              <WrappedRanking data={data.rank} series="pm25" year={year} />
+              <WrappedRanking
+                data={data.rank}
+                series="pm25"
+                year={year}
+                numNodes={numNodes}
+              />
             </Col>
             <Col xs={24} md={12} xl={6}>
-              <WrappedRanking data={data.rank} series="no2" year={year} />
+              <WrappedRanking
+                data={data.rank}
+                series="no2"
+                year={year}
+                numNodes={numNodes}
+              />
             </Col>
             <Col xs={24} md={12} xl={6}>
               <WrappedFinal />
